@@ -15,5 +15,14 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    /*
+        first, we pass the load bit into a DMux8Way
+        these will be passed into our registers.
+
+        then, we pass our RAM8 input into the registers.
+
+        after that, we check every register's output.
+        we pass that into a mux (selector=address).
+        the mux outputs the RAM8 output.
+    */
 }
