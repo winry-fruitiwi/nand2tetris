@@ -16,5 +16,20 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+        // figure out if it's even worthwhile to load
+        Or (a=load, b=reset, out=canResetOrInc);
+        Or (a=canResetOrInc, b=inc, out=canLoad);
+
+        // are we incrementing?
+        Inc16 (in=previousState, out=incremented);
+        Mux16 (a=in, b=incremented, sel=inc, out=ifInc);
+
+        // are we loading a different bit value?
+        Mux16 (a=ifInc, b=in, sel=load, out=ifLoaded);
+
+        // do we need to reset?
+        Mux16 (a=ifLoaded, b=false, sel=reset, out=ifReset);
+
+        // now we register the results
+        Register (in=ifReset, load=canLoad, out=out, out=previousState);
 }
