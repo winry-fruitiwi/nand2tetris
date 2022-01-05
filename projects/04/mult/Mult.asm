@@ -12,10 +12,10 @@
 // Put your code here.
 
 // pseudocode:
-//   initialize product, firstnum, secondnum, i
+//   initialize product, multiplied, multiplier, i
 //   LOOP:
-//     if i>=secondnum, goto stop
-//     product += firstnum
+//     if i>=multiplier, goto stop
+//     product += multiplied
 //     i++
 //     repeat (goto loop)
 //
@@ -24,3 +24,17 @@
 //
 //   END:
 //     NOP slide protection
+
+// initializing the variables
+@R0
+D=M
+@multiplied
+M=D
+@R1
+D=M
+@multiplier
+M=D
+@product
+M=0
+@i
+M=1 // on my drawing pad I have i=1, whoops
