@@ -10,3 +10,17 @@
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
 // Put your code here.
+
+// pseudocode:
+//   initialize product, firstnum, secondnum, i
+//   LOOP:
+//     if i>=secondnum, goto stop
+//     product += firstnum
+//     i++
+//     repeat (goto loop)
+//
+//   STOP:
+//     put variables in correct places
+//
+//   END:
+//     NOP slide protection
