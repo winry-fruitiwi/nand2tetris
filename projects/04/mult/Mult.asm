@@ -12,29 +12,56 @@
 // Put your code here.
 
 // pseudocode:
-//   initialize product, multiplied, multiplier, i
+//
+//   R0*R1 = R2 or sum
+//   
+//   R0 = number to be multiplied
+//   R1 = number of times to multiply
+//   
+//   
+//   i = 1
+//   sum = 0
 //   LOOP:
-//     if i>=multiplier, goto stop
-//     product += multiplied
+//     if i >= R1, goto STOP
+//     sum += R0
 //     i++
-//     repeat (goto loop)
-//
+//     goto loop
+//   
 //   STOP:
-//     put variables in correct places
-//
+//     sum ⭢ R2
+//   
 //   END:
-//     NOP slide protection
+//     infinite loop (NOP slide protection)
 
-// initializing the variables
-@R0
-D=M
-@multiplied
-M=D
-@R1
-D=M
-@multiplier
-M=D
-@product
-M=0
+
 @i
-M=1 // on my drawing pad I have i=1, whoops
+M=1       // i=1
+@sum
+M=0       // sum=0
+
+(LOOP)
+  @i
+  D=M
+  @R1
+  D=D-M   // D=i-n
+  @STOP
+  D;JGT   // if i>=n, goto STOP
+
+  @R0
+  D=M
+  @sum
+  M=M+D   // sum+= R0
+  @i
+  M=M+1
+  @LOOP
+  0;JMP   // repeat
+
+(STOP)
+  @sum
+  D=M
+  @R2
+  M=D     // RAM[2]=sum
+
+(END)
+  @END
+  0;JMP   // infinite loop
