@@ -12,3 +12,15 @@
 // the screen should remain fully clear as long as no key is pressed.
 
 // Put your code here.
+
+
+// Pseudocode:
+//   if KBD register != 0, goto ON
+//   if KBD register == 0, goto OFF
+//
+//   (ON)
+//     set full screen to -1
+//     goto 0
+//   (OFF)
+//     set full screen to 0
+//     goto 0
