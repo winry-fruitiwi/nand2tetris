@@ -44,17 +44,23 @@ CHIP CPU {
 
         And(a=instruction[5], b=instruction[15], out=A);
 
-        Not(in=A, out=notA);
+        // Not(in=A, out=notA);
         
-        ARegister(in=aValue, load=notA, out=Aregout, out[0..14]=addressM);
+        ARegister(in=aValue, load=A, out=Aregout, out[0..14]=addressM);
 
         And(a=instruction[4], b=instruction[15], out=D);
         
         DRegister(in=ALUOutput, load=D, out=Dregout);
         
         Mux16(b=inM, a=Aregout, sel=instruction[12], out=morA);
+
+        // Not(in=Dregout, out=x);
+
+        // Not(in=morA, out=y);
+
+        Mux16(a[0..5]=instruction[6..11], b[0]=true, b[1]=false, b[2]=true, b[3]=false, b[4]=false, b[5]=false, sel=instruction[15], out[0]=c1, out[1]=c2, out[2]=c3, out[3]=c4, out[4]=c5, out[5]=c6);
         
-        ALU(x=Dregout, y=morA, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUOutput, ng=ifneg, zr=ifzero, out=outM);
+        ALU(x=Dregout, y=morA, zx=c1, nx=c2, zy=c3, ny=c4, f=c5, no=c6, out=ALUOutput, ng=ifneg, zr=ifzero, out=outM);
         
         
         // do we need to jump?
@@ -69,9 +75,9 @@ CHIP CPU {
 
         // compute which jump we need
         
-        // Mux8Way16(a[0]=false, b[0]=JGT, c[0]=ifzero, d[0]=JGE, e[0]=ifneg, f[0]=JLE, g[0]=true, sel=instruction[3..5], out[0]=ifJump); // this is just wrong
+        Mux8Way16(a[0]=false, b[0]=JGT, c[0]=ifzero, d[0]=JGE, e[0]=ifneg, f[0]=JLE, g[0]=true, sel=instruction[3..5], out[0]=ifJump);
         
-        Mux8Way16(g[0]=false, f[0]=JGT, e[0]=ifzero, d[0]=JGE, c[0]=ifneg, b[0]=JLE, a[0]=true, sel=instruction[3..5], out[0]=ifJump);
+        // Mux8Way16(g[0]=false, f[0]=JGT, e[0]=ifzero, d[0]=JGE, c[0]=ifneg, b[0]=JLE, a[0]=true, sel=instruction[3..5], out[0]=ifJump);
         
         PC(in=Aregout, reset=reset, load=ifJump, inc=true, out[0..14]=pc);
 

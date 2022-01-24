@@ -24,3 +24,53 @@
 //   (OFF)
 //     set full screen to 0
 //     goto 0
+
+@i
+M=0
+
+// decide between on and off
+@KBD
+D=M
+@ON
+D;JNE // goto ON if D != 0
+@OFF
+D;JEQ // goto OFF if D == 0
+
+// if a key is pushed, goto ON
+(ON)
+  @8192    // length of builtin SCREEN chip
+  D=A
+  @i
+  D=D-M    // D=8192-i
+  @0
+  D;JLE
+
+  @i
+  D=M      // where are we?
+  @SCREEN
+  A=A+D
+  M=-1
+  @i
+  M=M+1
+  @ON
+  0;JMP
+
+// otherwise, goto OFF
+(OFF)
+  @8192    // length of builtin SCREEN chip
+  D=A
+  @i
+  D=D-M    // D=8192-i
+  @0
+  D;JLE
+
+  @i
+  D=M      // where are we?
+  @SCREEN
+  A=A+D
+  M=0
+  @i
+  M=M+1
+  @OFF
+  0;JMP
+
