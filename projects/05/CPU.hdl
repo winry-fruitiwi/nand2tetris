@@ -40,13 +40,15 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
-        Mux16(b=instruction, a=ALUOutput, sel=instruction[15], out=aValue);
+        Not(in=instruction[15], out=opcode);
+
+        Mux16(b=instruction, a=ALUOutput, sel=opcode, out=aValue);
 
         And(a=instruction[5], b=instruction[15], out=A);
 
-        // Not(in=A, out=notA);
+        Not(in=A, out=notA);
         
-        ARegister(in=aValue, load=A, out=Aregout, out[0..14]=addressM);
+        ARegister(in=aValue, load=notA, out=Aregout, out[0..14]=addressM);
 
         And(a=instruction[4], b=instruction[15], out=D);
         
@@ -65,21 +67,22 @@ CHIP CPU {
         
         // do we need to jump?
         
-        Not(in=ifneg, out=JGT);
+        // Not(in=ifneg, out=JGE);
         
-        Or(a=JGT, b=ifzero, out=JGE);
+        // Or(a=JGT, b=ifzero, out=JGE);
         
-        Not(in=ifzero, out=JNE);
+        // Not(in=ifzero, out=JNE);
         
-        Or(a=ifneg, b=ifzero, out=JLE);
+        // Or(a=ifneg, b=ifzero, out=JLE);
 
         // compute which jump we need
         
-        Mux8Way16(a[0]=false, b[0]=JGT, c[0]=ifzero, d[0]=JGE, e[0]=ifneg, f[0]=JLE, g[0]=true, sel=instruction[3..5], out[0]=ifJump);
+        // Mux8Way16(a[0]=false, b[0]=JGT, c[0]=ifzero, d[0]=JGE, e[0]=JNE, f[0]=ifneg, f[0]=JLE, g[0]=true, sel=instruction[3..5], out[0]=ifJump);
         
         // Mux8Way16(g[0]=false, f[0]=JGT, e[0]=ifzero, d[0]=JGE, c[0]=ifneg, b[0]=JLE, a[0]=true, sel=instruction[3..5], out[0]=ifJump);
         
-        PC(in=Aregout, reset=reset, load=ifJump, inc=true, out[0..14]=pc);
+        // calculate load again
+        PC(in=Aregout, reset=reset, load=false, inc=true, out[0..14]=pc);
 
         // had to waste a gate
         
