@@ -53,6 +53,8 @@ CHIP CPU {
         And(a=instruction[4], b=instruction[15], out=D);
         
         DRegister(in=ALUOutput, load=D, out=Dregout);
+
+        // Not(in=instruction[12], out=a);
         
         Mux16(b=inM, a=Aregout, sel=instruction[12], out=morA);
 
@@ -60,7 +62,7 @@ CHIP CPU {
 
         // Not(in=morA, out=y);
 
-        Mux16(a[0..5]=instruction[6..11], b[0]=true, b[1]=false, b[2]=true, b[3]=false, b[4]=false, b[5]=false, sel=instruction[15], out[0]=c1, out[1]=c2, out[2]=c3, out[3]=c4, out[4]=c5, out[5]=c6);
+        Mux16(a[0..5]=instruction[6..11], b[0]=true, b[1]=false, b[2]=false, b[3]=false, b[4]=true, b[5]=false, sel=instruction[15], out[0]=c1, out[1]=c2, out[2]=c3, out[3]=c4, out[4]=c5, out[5]=c6);
         
         ALU(x=Dregout, y=morA, zx=c1, nx=c2, zy=c3, ny=c4, f=c5, no=c6, out=ALUOutput, ng=ifneg, zr=ifzero, out=outM);
         
