@@ -42,51 +42,58 @@ CHIP CPU {
     // Put your code here:
         Not(in=instruction[15], out=opcode);
 
-        Mux16(b=instruction, a=ALUOutput, sel=opcode, out=aValue);
-
-        And(a=instruction[5], b=instruction[15], out=A);
-
-        Not(in=A, out=notA);
+        /* find the load bit for the ARegister */
+        And(a=instruction[5], b=instruction[15], out=aIfAIsOne);
+        Not(in=aIfAIsOne, out=aBeforeMux);
+        Mux(a=aIfAIsOne, b=instruction[5], sel=opcode, out=registerALoadBit);
         
-        ARegister(in=aValue, load=notA, out=Aregout, out[0..14]=addressM);
 
-        And(a=instruction[4], b=instruction[15], out=D);
+        /* find the value we need to pass into the ARegister */
+        Mux16(b=instruction, a=ALUOutput, sel=opcode, out=ARegisterValue);
+
         
-        DRegister(in=ALUOutput, load=D, out=Dregout);
+        /* pass the load bit and the value into the ARegister chip */
+        ARegister(in=ARegisterValue, load=registerALoadBit, out=Aregout, out[0..14]=addressM);
 
-        // Not(in=instruction[12], out=a);
         
-        Mux16(b=inM, a=Aregout, sel=instruction[12], out=morA);
-
-        // Not(in=Dregout, out=x);
-
-        // Not(in=morA, out=y);
-
-        Mux16(a[0..5]=instruction[6..11], b[0]=true, b[1]=false, b[2]=false, b[3]=false, b[4]=true, b[5]=false, sel=instruction[15], out[0]=c1, out[1]=c2, out[2]=c3, out[3]=c4, out[4]=c5, out[5]=c6);
-        
-        ALU(x=Dregout, y=morA, zx=c1, nx=c2, zy=c3, ny=c4, f=c5, no=c6, out=ALUOutput, ng=ifneg, zr=ifzero, out=outM);
+        /* find the load bit for the DRegister */
+        And(a=instruction[4], b=instruction[15], out=DRegisterLoadBit);
         
         
-        // do we need to jump?
+        /* pass in the ALU's output and the load bit for the D register */
+        DRegister(in=ALUOutput, load=DRegisterLoadBit, out=x);
+
         
+        /* find the y input for the ALU */
+        Mux16(b=inM, a=Aregout, sel=instruction[12], out=y);
+
+        
+        /* find the control bits for the ALU */
+        Mux16(a[0..5]=instruction[6..11], b[0]=true, b[1]=false, b[2]=false, b[3]=false, b[4]=true, b[5]=false, sel=opcode, out[5]=c1, out[4]=c2, out[3]=c3, out[2]=c4, out[1]=c5, out[0]=c6);
+        
+        
+        /* the ALU! */
+        // we could feed the bits directly into the ALU, but using the mux makes the code shorter and easier to read.
+        ALU(x=x, y=y, zx=c1, nx=c2, zy=c3, ny=c4, f=c5, no=c6, out=ALUOutput, ng=ifneg, zr=ifzero, out=outM);
+        
+        
+        /* compute the different jump bits. currently the code is wrong and commented out. */
         // Not(in=ifneg, out=JGE);
-        
         // Or(a=JGT, b=ifzero, out=JGE);
-        
         // Not(in=ifzero, out=JNE);
-        
         // Or(a=ifneg, b=ifzero, out=JLE);
 
-        // compute which jump we need
         
-        // Mux8Way16(a[0]=false, b[0]=JGT, c[0]=ifzero, d[0]=JGE, e[0]=JNE, f[0]=ifneg, f[0]=JLE, g[0]=true, sel=instruction[3..5], out[0]=ifJump);
+        /* use a mux to decide which jump condition we need. this is the PC load bit. */
+        // I don't know which one of these are right.
+        // Mux8Way16(a[0]=false, b[0]=JGT, c[0]=ifzero, d[0]=JGE, e[0]=JNE, f[0]=ifneg, f[0]=JLE, g[0]=true, sel=instruction[3..5], out[0]=PCLoad);
+        // Mux8Way16(g[0]=false, f[0]=JGT, e[0]=ifzero, d[0]=JGE, c[0]=ifneg, b[0]=JLE, a[0]=true, sel=instruction[3..5], out[0]=PCLoad);
         
-        // Mux8Way16(g[0]=false, f[0]=JGT, e[0]=ifzero, d[0]=JGE, c[0]=ifneg, b[0]=JLE, a[0]=true, sel=instruction[3..5], out[0]=ifJump);
         
-        // calculate load again
+        /* the PC. currently I'm passing in false for load. that is a placeholder value. */
         PC(in=Aregout, reset=reset, load=false, inc=true, out[0..14]=pc);
 
-        // had to waste a gate
         
+        /* calculate whether or not we wrote to the current memory register. */
         And(a=instruction[3], b=instruction[15], out=writeM);
 }
