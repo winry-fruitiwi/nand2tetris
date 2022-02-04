@@ -40,10 +40,7 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
-        /* find the load bit for the ARegister TODO: unnecessary code */
-        // this code turns out to be unecessary because it always turns into 1.
-        // And (a=instruction[5], b=instruction[15], out=aIfAIsOne);
-        // Not (in=aIfAIsOne, out=aBeforeMux);
+        /* find the load bit for the ARegister */
         Mux (a=true, b=instruction[5], sel=instruction[15], out=registerALoadBit);
         
 
@@ -65,19 +62,9 @@ CHIP CPU {
         
         /* find the y input for the ALU */
         Mux16 (b=inM, a=Aregout, sel=instruction[12], out=y);
-
-        
-        /* find the control bits for the ALU  TODO: unnecessary code. replace with instruction[n] */
-        // when there's an A instruction, 100010 preserves the DRegister's output because the zy and f bits are on: zy makes the y-input zero and the function is now addition instead of the logical and.
-        // this is unecessary code because it doesn't matter what the ALU outputs on this frame.
-        // Mux16 (a[0..5]=instruction[6..11], b[0]=true, b[1]=false, b[2]=false, b[3]=false, b[4]=true, b[5]=false, sel=instruction[15], out[5]=c1, out[4]=c2, out[3]=c3, out[2]=c4, out[1]=c5, out[0]=c6);
         
         
         /* the ALU! */
-        // this is old, outdated code:
-        // we could feed the bits directly into the ALU, but using the mux makes the code shorter and easier to read.
-        // ALU (x=DRegout, y=y, zx=c1, nx=c2, zy=c3, ny=c4, f=c5, no=c6, out=ALUOutput, ng=ifneg, zr=ifzero, out=outM);
-        // this is newer code that's less messy
         ALU (x=DRegout, y=y, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUOutput, ng=ifneg, zr=ifzero, out=outM);
         
         
@@ -90,9 +77,7 @@ CHIP CPU {
 
         
         /* use a mux to decide which jump condition we need. this is the PC load bit. */
-        // I don't know which one of these are right.
         Mux8Way16 (a[0]=false, b[0]=JGT, c[0]=ifzero, d[0]=JGE, e[0]=ifneg, f[0]=JNE, g[0]=JLE, h[0]=true, sel=instruction[0..2], out[0]=PCLoad);
-        // Mux8Way16 (g[0]=false, f[0]=JGT, e[0]=ifzero, d[0]=JGE, c[0]=ifneg, b[0]=JLE, a[0]=true, sel=instruction[3..5], out[0]=PCLoad);
         And (a=instruction[15], b=PCLoad, out=PCLoadIfNotAInstruction);
         
         /* the PC. currently I'm passing in false for load. that is a placeholder value. */
