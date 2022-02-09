@@ -21,6 +21,38 @@
  * memory map. The behavior in these addresses is described in the 
  * Screen and Keyboard chip specifications given in the book.
  */
+ 
+ /*
+
+ Notes:
+    to select Screen:
+        somehow compare values...
+        if comp. = true, access screen (flatten bus to 13)
+    RAM: just plug in the value!
+    Keyboard: no input, just return
+
+    to compare values:
+        use addition and maybe even a CPU! ← turns out to be wrong
+        add 1 to the negative of 16384 (not written on my drawing pad: the negative is actually -16385). Then use ALU? ← wrong
+        other: just compute ng manually
+
+        Do the same for 24576 - 16384 (it's 8192)
+
+        specifics:
+            use an adder to add the address to -16384 and -24576. If the first condition is negative, I return RAM's output.
+            If the second condition is negative, I have to calculate the SCREEN's index, and then I return it.
+            If the third condition is negative, I think you can just say Keyboard(out=out).
+
+            However, if you need to load, you also have to plug in the load values to RAM and Screen, but not Keyboard.
+            If we had a Mux3Way16, that'd be great, since we need to use a multiplexor 
+
+    Two important insights (with Kiwi's help):
+
+        1. The first bit of the 15-digit string of addresses is the selector between RAM and Screen.
+
+        2. The first bit of the 15-digit string of addresses can be removed and I can use the resulting word in the Screen chip address.
+
+ */
 
 CHIP Memory {
     IN in[16], load, address[15];
