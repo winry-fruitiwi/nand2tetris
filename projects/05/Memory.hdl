@@ -52,6 +52,14 @@
 
         2. The first bit of the 15-digit string of addresses can be removed and I can use the resulting word in the Screen chip address.
 
+    
+    to compare address to 24576:
+        first, find negative of 24576 (use Not16 and Inc)
+        then, add this to address
+
+        if the result is zero:
+            select the keyboard!
+
  */
 
 CHIP Memory {
@@ -60,4 +68,42 @@ CHIP Memory {
 
     PARTS:
     // Put your code here:
+        /* the RAM16K's output and load */
+        RAM16K (in=in, address=address[0..13], load=load, out=ramOut);
+
+
+
+        /* the Screen's output and load */
+        Screen (in=in, address=address[0..12], load=load, out=screenOut);
+
+
+
+        /* the Keyboard's output. It is connected to my keyboard. */
+        Keyboard (out=keyboardOut);
+
+
+
+        /* decide between using the RAM's and Screen's outputs */
+        Mux16 (a=ramOut, b=screenOut, sel=address[14], out=ramOrScreen);
+
+
+
+        /* find the load bit for the decision between the previous output and the keyboard. */
+        // to find the bit, we need to check if the address is 24576.
+        Not16 (in[0]=true, in[1]=true, out=not24576);
+        Inc16 (in=not24576, out=negative24576);
+        Add16 (a[0..14]=address, b=negative24576, out[0..7]=ifKeyboardFirstHalf, out[8..15]=ifKeyboardSecondHalf);
+        
+        // find if our result from the Add16 was zero
+        Or8Way(in=ifKeyboardFirstHalf, out=firstEightZero);
+        Or8Way(in=ifKeyboardSecondHalf, out=secondEightZero);
+        Or (a=firstEightZero, b=firstEightZero, out=addressWas24576);
+
+        // invert the result. otherwise, if you tested, we'd get the not of the expected result.
+        Not (in=addressWas24576, out=addressMinus24576IsZero);
+
+
+
+        /* now we can select between ramOrScreen and keyboardOut */
+        Mux16 (a=ramOrScreen, b=keyboardOut, sel=addressMinus24576IsZero, out=out);
 }
