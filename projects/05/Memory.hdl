@@ -68,13 +68,38 @@ CHIP Memory {
 
     PARTS:
     // Put your code here:
+
+        /* find the load bit for the decision between the previous output and the keyboard. */
+        // to find the bit, we need to check if the address is 24576.
+        Not16 (in[13]=true, in[12]=true, out=not24576);
+        Inc16 (in=not24576, out=negative24576);
+        Add16 (a[0..14]=address, b=negative24576, out[0..7]=ifKeyboardFirstHalf, out[8..15]=ifKeyboardSecondHalf);
+
+        // find if our result from the Add16 was zero
+        Or8Way(in=ifKeyboardFirstHalf, out=firstEightZero);
+        Or8Way(in=ifKeyboardSecondHalf, out=secondEightZero);
+        Or (a=firstEightZero, b=firstEightZero, out=addressWas24576);
+
+        // invert the result. otherwise, if you tested, we'd get the negative of the expected result.
+        Not (in=addressWas24576, out=addressMinus24576IsZero);
+
+
+
+        /* we also need to reconfigure the load bits of the RAM and Screen when we're selecting the keyboard */
+        DMux (in=load, sel=address[14], a=ramLoad, b=screenLoadIfNotKeyboard);
+
+        // if we don't add this and statement we'll be selecting the Screen even when we're selecting the keyboard
+        And (a=addressMinus24576IsZero, b=screenLoadIfNotKeyboard, out=screenLoad);
+
+
+
         /* the RAM16K's output and load */
-        RAM16K (in=in, address=address[0..13], load=load, out=ramOut);
+        RAM16K (in=in, address=address[0..13], load=ramLoad, out=ramOut);
 
 
 
         /* the Screen's output and load */
-        Screen (in=in, address=address[0..12], load=load, out=screenOut);
+        Screen (in=in, address=address[0..12], load=screenLoad, out=screenOut);
 
 
 
@@ -85,22 +110,6 @@ CHIP Memory {
 
         /* decide between using the RAM's and Screen's outputs */
         Mux16 (a=ramOut, b=screenOut, sel=address[14], out=ramOrScreen);
-
-
-
-        /* find the load bit for the decision between the previous output and the keyboard. */
-        // to find the bit, we need to check if the address is 24576.
-        Not16 (in[0]=true, in[1]=true, out=not24576);
-        Inc16 (in=not24576, out=negative24576);
-        Add16 (a[0..14]=address, b=negative24576, out[0..7]=ifKeyboardFirstHalf, out[8..15]=ifKeyboardSecondHalf);
-        
-        // find if our result from the Add16 was zero
-        Or8Way(in=ifKeyboardFirstHalf, out=firstEightZero);
-        Or8Way(in=ifKeyboardSecondHalf, out=secondEightZero);
-        Or (a=firstEightZero, b=firstEightZero, out=addressWas24576);
-
-        // invert the result. otherwise, if you tested, we'd get the not of the expected result.
-        Not (in=addressWas24576, out=addressMinus24576IsZero);
 
 
 
