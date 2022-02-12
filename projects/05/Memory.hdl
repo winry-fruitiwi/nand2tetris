@@ -71,7 +71,7 @@ CHIP Memory {
 
         /* find the load bit for the decision between the previous output and the keyboard. */
         // to find the bit, we need to check if the address is 24576.
-        Not16 (in[13]=true, in[12]=true, out=not24576);
+        Not16 (in[14]=true, in[13]=true, out=not24576);
         Inc16 (in=not24576, out=negative24576);
         Add16 (a[0..14]=address, b=negative24576, out[0..7]=ifKeyboardFirstHalf, out[8..15]=ifKeyboardSecondHalf);
 
@@ -114,5 +114,5 @@ CHIP Memory {
 
 
         /* now we can select between ramOrScreen and keyboardOut */
-        Mux16 (a=ramOrScreen, b=keyboardOut, sel=addressMinus24576IsZero, out=out);
+        Mux16 (a=ramOrScreen, b=keyboardOut, sel=addressWas24576, out=out);
 }
