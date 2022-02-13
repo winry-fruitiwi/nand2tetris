@@ -71,17 +71,31 @@ CHIP Memory {
 
         /* find the load bit for the decision between the previous output and the keyboard. */
         // to find the bit, we need to check if the address is 24576.
-        Not16 (in[14]=true, in[13]=true, out=not24576);
-        Inc16 (in=not24576, out=negative24576);
-        Add16 (a[0..14]=address, b=negative24576, out[0..7]=ifKeyboardFirstHalf, out[8..15]=ifKeyboardSecondHalf);
+        // This is Cody's implementation (if it's not exact, it's just the idea). Much simpler and faster.
+        Not (in=address[14], out=moddedAddressAt14);
+        Not (in=address[13], out=moddedAddressAt13);
+        // I have to waste a gate here so that I can modify the address. Was there a better way?
+        Mux16 (a[0..14]=address, a[14]=moddedAddressAt14, a[13]=moddedAddressAt13, sel=false,
+               out[0..7]=ifKeyboardFirstHalf, out[8..15]=ifKeyboardSecondHalf);
+
+        // Zz said it was funny how I always came up with weird solutions. This is mine but it doesn't work.
+
+        // Not16 (in[14]=true, in[13]=true, out=not24576);
+        // Inc16 (in=not24576, out=negative24576);
+        // Add16 (a[0..14]=address, b=negative24576, out[0..7]=ifKeyboardFirstHalf, out[8..15]=ifKeyboardSecondHalf);
 
         // find if our result from the Add16 was zero
-        Or8Way(in=ifKeyboardFirstHalf, out=firstEightZero);
-        Or8Way(in=ifKeyboardSecondHalf, out=secondEightZero);
-        Or (a=firstEightZero, b=firstEightZero, out=addressWas24576);
+        // Or8Way(in=ifKeyboardFirstHalf, out=firstEightZero);
+        // Or8Way(in=ifKeyboardSecondHalf, out=secondEightZero);
+        // Or (a=firstEightZero, b=firstEightZero, out=addressWas24576);
+        // I forgot the alternate solution. Hints:
+        // It uses 2 ands
+        // My bits have to be a length of 1; otherwise - oh. The solution is to and the two nots. (duh-ish)
+        And (a=moddedAddressAt14, b=moddedAddressAt13, out=addressMinus24576IsZero);
 
         // invert the result. otherwise, if you tested, we'd get the negative of the expected result.
-        Not (in=addressWas24576, out=addressMinus24576IsZero);
+        // obsolete
+        // Not (in=addressWas24576, out=addressMinus24576IsZero);
 
 
 
@@ -114,5 +128,5 @@ CHIP Memory {
 
 
         /* now we can select between ramOrScreen and keyboardOut */
-        Mux16 (a=ramOrScreen, b=keyboardOut, sel=addressWas24576, out=out);
+        Mux16 (a=ramOrScreen, b=keyboardOut, sel=addressMinus24576IsZero, out=out);
 }
