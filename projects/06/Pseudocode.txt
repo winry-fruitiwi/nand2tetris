@@ -1,0 +1,50 @@
+☀ Pseudocode for the Assembler ☀
+
+🎴 Figure out how the **** you read files
+	Maybe look this up online, or have an experimental project.
+
+Basic assembler translates symbol-less code
+	create Parser, Code classes
+	add hasMoreCommands(), advance() methods
+	read an instruction and separate instruction
+	replace ASCII parts with binary numbers
+	put string together to form output string
+
+Start symbol translations for symbol files
+	create SymbolTable class
+	add symbolExists() methods
+	go through all the instructions in file
+	if the syntax is (x), add to collection
+		Use symbol table class with a dict
+		Add symbol-value pairs to the dict
+	otherwise, continue to scan instructions
+
+Combine these classes into a full assembler
+	create Assembler class
+	do everything in both fields.
+
+
+🕯 Testing for the Assembler 🕯
+
+Basic assembler test files:
+	Add.asm (no AddL.asm because Add.asm has no symbols)
+	MaxL.asm
+	RectangleL.asm
+	PongL.asm? (very long. questionable test file)
+
+Symbol translation test files:
+	Max.asm
+	Rectangle.asm
+	Pong.asm? (very long, questionable test)
+
+	Note that files from the Add folder do not have symbols.
+
+Full assembler test files:
+	Add.asm (could have something wrong testing add.asm)
+	Max.asm
+	MaxL.asm
+	Rectangle.asm
+	RectangleL.asm
+	Pong.asm
+	PongL.asm
+	Note that Pong files should be tested only here.
