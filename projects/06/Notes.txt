@@ -1,0 +1,109 @@
+Notes for Nand assembler
+
+First, start reading a file with a given name
+	Create a Parser class?
+
+Then, move to next command in file.
+	boolean hasMoreCommands()
+	void advance()
+	one line at a time
+	skip whitespace (comments included)
+
+Get the field of the current command.
+	Can be:
+		A-command (@value), C-command (dest=comp;jump), and labels (denoted with parenthenses)
+		Give easy access to the fields:
+			D=M+1; JGT is equivalent to the strings D  M+1  JGT          @sum  is equivalent to the string sum
+			Could use functions for C-commands: String dest(), String comp(), String jump()
+			Could use functions for A-commands: String label()
+
+After all this we translate the mnemonic to code.
+	Comp: Use table
+	Dest: Use table
+	Jump: Use table
+
+
+Example:
+	// Assume that current command is
+	//      D = M+1; JGT
+
+	String c = parser.comp(); // "M+1"
+	String d = parser.dest(); // "D"
+	String j = parser.jump(); // "JGT"
+
+	String cc = code.comp(c); // "1110111"
+	String dd = code.dest(d); // "010"
+	String jj = code.jump(j); // "001"
+
+	String out= "111" + cc + dd + jj;
+
+
+The Symbol Table
+	
+	Looks something like this when visualized:
+
+	Symbol    Address
+	
+	loop      73
+	sum       12
+
+
+	Required functionality:
+		Creating new empty tables
+
+		Adding (symbol, address) pairs to the table (sounds like a dictionary)
+		
+		Does the table have a given symbol? (woah. a dictionary)
+		
+		What is the address associated with a given symbol? (yeah. dictionary)
+
+
+Using the Symbol Table
+	
+	Requirements:
+		Create a new empty table
+
+		Add all the pre-defined symbols to the table
+		
+		While reading the input, add labels and new variables to the table
+			Labels: When you see (xxx), add xxx and the address of the next
+			machine language command
+				this requires maintaining this running address
+				this may need to be done in a first pass
+
+		Whenever you see an "@xxx" command, where xxx is not a number and not
+		in the table, consult the table to replace the symbol xxx with its address.
+
+
+
+Next video:
+	Develop basic assembler, translating programs with no loops or labels.
+		Compatible test files:
+			Add.asm
+			MaxL.asm
+			RectangleL.asm
+			PongL.asm
+
+		Developing test files:
+			Add3Nums.asm
+
+	Handle symbols (say, invent a SymbolTable class).
+		Compatible test files:
+			Max.asm
+			Rectangle.asm
+			Pong.asm
+
+		Developing test files: 
+			Sum1ToN.asm
+
+	Put the previous two tests together, making assembler to translate anything.
+		Compatible test files:
+			      Add.asm
+			      Max.asm         MaxL.asm
+			Rectangle.asm	RectangleL.asm
+			     Pong.asm        PongL.asm
+
+		Developing test files:
+			Sum1ToN.asm
+			Add3.asm
+			Mult.asm
