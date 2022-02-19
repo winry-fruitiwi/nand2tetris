@@ -6,22 +6,30 @@
 Basic assembler translates symbol-less code
 	create Parser, Code classes
 	add hasMoreCommands(), advance() methods
-	read an instruction and separate instruction
-	replace ASCII parts with binary numbers
-	put string together to form output string
+	read and separate an instruction
+		if there is an equal sign, register comp and dest. If there is
+		a semicolon, register jump.
+		retrieve respective binary numbers from table of values
+		put string together to form output string
+		if there is an @, add a 0 to the beginning of the string and
+		find 15-digit number after the @. convert it to binary
 
 Start symbol translations for symbol files
-	create SymbolTable class
-	add symbolExists() methods
+	create SymbolTable class (datastructure is dictiohnary)
+	initialize builtin symbols (R0 → R1, screen-keybard, others)
+	add symbolExists() method
 	go through all the instructions in file
 	if the syntax is (x), add to collection
 		Use symbol table class with a dict
 		Add symbol-value pairs to the dict
-	otherwise, continue to scan instructions
+	otherwise, continue to scan instructions until end of file
 
 Combine these classes into a full assembler
 	create Assembler class
-	do everything in both fields.
+	first pass:
+		search labels. add to symbol table
+	second pass:
+		search for more variables while translating instructions. 
 
 
 🕯 Testing for the Assembler 🕯
