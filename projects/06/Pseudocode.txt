@@ -6,13 +6,15 @@
 Basic assembler translates symbol-less code
 	create Parser, Code classes
 	add hasMoreCommands(), advance() methods
-	read and separate an instruction
+	read and separate an instruction in Parser
 		if there is an equal sign, register comp and dest. If there is
-		a semicolon, register jump.
-		retrieve respective binary numbers from table of values
-		put string together to form output string
-		if there is an @, add a 0 to the beginning of the string and
-		find 15-digit number after the @. convert it to binary
+		a semicolon, register jump. Else, register comp
+		retrieve the ASCII that is required
+		code class:
+			retrieve respective binary numbers from table of values
+			put string together to form output string
+			if there is an @, add a 0 to the beginning of the string and
+			find 15-digit number after the @. convert it to binary
 
 Start symbol translations for symbol files
 	create SymbolTable class (datastructure is dictiohnary)
@@ -38,12 +40,12 @@ Basic assembler test files:
 	Add.asm (no AddL.asm because Add.asm has no symbols)
 	MaxL.asm
 	RectangleL.asm
-	PongL.asm? (very long. questionable test file)
+	PongL.asm (can still use simulator test)
 
 Symbol translation test files:
 	Max.asm
 	Rectangle.asm
-	Pong.asm? (very long, questionable test)
+	Cannot test Pong.asm (too long)
 
 	Note that files from the Add folder do not have symbols.
 
@@ -55,4 +57,4 @@ Full assembler test files:
 	RectangleL.asm
 	Pong.asm
 	PongL.asm
-	Note that Pong files should be tested only here.
+	Pong files are long but can still be tested here.
