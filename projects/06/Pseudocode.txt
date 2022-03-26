@@ -1,9 +1,9 @@
 ☀ Pseudocode for the Assembler ☀
 
-🎴 Figure out how the **** you read files
-	Maybe look this up online, or have an experimental project.
+🎴 Figure out how you read files
+	☒ loadStrings() Maybe look this up online, or have an experimental project.
 
-Basic assembler translates symbol-less code
+☒ Basic assembler translates symbol-less code
 	create Parser, Code classes
 	add hasMoreCommands(), advance() methods
 	read and separate an instruction in Parser
@@ -16,8 +16,8 @@ Basic assembler translates symbol-less code
 			if there is an @, add a 0 to the beginning of the string and
 			find 15-digit number after the @. convert it to binary
 
-Start symbol translations for symbol files
-	create SymbolTable class (datastructure is dictiohnary)
+☐ Start symbol translations for symbol files
+	create SymbolTable class (datastructure is dictionary)
 	initialize builtin symbols (R0 → R1, screen-keybard, others)
 	add symbolExists() method
 	go through all the instructions in file
@@ -25,14 +25,10 @@ Start symbol translations for symbol files
 		Use symbol table class with a dict
 		Add symbol-value pairs to the dict
 	otherwise, continue to scan instructions until end of file
-
-Combine these classes into a full assembler
-	create Assembler class
-	first pass:
-		search labels. add to symbol table
-	second pass:
-		search for more variables while translating instructions. 
-
+	use regex to find if symbol is @x
+		expression should look something like "@.[^0-9]"
+		if expression is @x:
+			if x doesn't already exist, add its respective value
 
 🕯 Testing for the Assembler 🕯
 
