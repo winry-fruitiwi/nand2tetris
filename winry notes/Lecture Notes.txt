@@ -1,0 +1,332 @@
+April 11th, 2022
+
+Unit 1.0
+road map: Jack→Compiler→VM→Translator→assembly→assembler→computer
+
+
+
+Unit 1.1
+
+preview of end:
+	review of jack
+	get to high-level programs
+	write once, run anywhere! as opposed to write once, fix everywhere
+	java VM: bytecode, give computers  JVM implementation
+	vm translator!
+	translating from one language to an assembly script is a headache
+	use intermediate steps: one compiler, a couple translators, a couple assemblers
+	idea is almost 90 years old!
+
+preview of jack:
+	java similarity
+	one platform, PC, other Hack
+	write compiler, put in Jack code, write translator, put in VM code
+
+virtual machine:
+	virtualization
+	not real
+	alan turing is very happy!
+	reason about reasoning
+	turing: "we can only see a short distance ahead, but we can see plenty there that needs to be done"
+
+take home lessons:
+	compilation
+	virtualization
+	VM abstraction
+	stack processing
+	VM implementation
+	pointers
+	programming
+
+
+
+Unit 1.2
+
+two conflicting objectives: height, lowness
+jump should not be very high
+
+optimal jump: stack machine abstraction
+	architecture (stack):
+		operations are push and pop
+		stack is similar to ram (memory)
+		memory = array, stack = stack
+		push memory: add to stack
+		pop memory: remove from stack, add to memory
+	arithmetic commands:
+		add: pop two topmost values, add on side, push result
+		neg: pop top value, negate side, push back on
+		function: pop arguments, compute f, push result (part of abstraction)
+		eq: pop two top values, check if equal, push result back on
+		or: pop two top values, evaluate boolean or, push result on
+
+
+
+Unit 1.2, second and third session
+
+two conflicting objectives: height, lowness
+jump should not be very high
+
+optimal jump: stack
+	architecture (stack):
+		operations are push and pop
+		stack is similar to ram (memory)
+		memory = array, stack = stack
+		push memory: add to stack
+		pop memory: remove from stack, add to memory
+	
+	arithmetic commands:
+		add: pop two topmost values, add on side, push result
+		neg: pop top value, negate side, push back on
+		function: pop arguments, compute f, push result (part of abstraction)
+		eq: pop two top values, check if equal, push result back on
+		or: pop two top values, evaluate boolean or, push result on
+	
+	where did these commands come from?
+		the compiler!
+		start from x = 17 + 19
+		compile: push 17; push 19; add; pop x
+		the high-level language is an abstraction
+		it can be implemented by a stack machine
+		the stack machine is an abstraction
+		it can be implemented by something unknown
+	
+	VM code is a stack machine manipulated by:
+		arithmetic / logical commands → example
+		memory segment commands
+		branching commands
+		function commands
+
+	arithmetic/logical commands are:
+		add	   x + y
+		sub	   x - y
+		neg	   -y
+		eq 	   x == 0 (error? this should be x==y)
+		gt 	   x > y
+		lt 	   x < y
+		and	   x and y
+		or 	   x or y
+		not	   not y
+
+	observation:
+		any expression that is arithmetic or logical can be evaluated with this stack.
+		You can do anything with VM codes. Tigress out.
+
+
+
+Unit 1.3, number of sessions: 2
+
+let c = s1 + y; → compiler → push s1; push y; add; pop c
+how did compiler do this?
+
+
+
+
+
+April 13th
+
+Unit 1.3, number of sessions today: 1
+
+[0250]-	cannot preserve variable names or else execution will be wrong
+introducing: virtual memory segments!
+
+instead of saying `push s1` we say `push ${s1Value}` but we lose variable names
+
+jvm does not interpret symbolic variable names.
+
+memory segment: constant! just 0-1-2-3-4-5-...
+
+why do we always have to say ... segment ...?
+	because it needs to be consistent and easy to compile
+
+actually there are eight memory segments, not four! why though?
+	we come from object oriented programs
+	there are a lot of variables and nuances there
+	for example, we always reference a lot of numbers
+
+there is one thing that eight memory segments versus one does not affect:
+	all push statements are the same!
+
+[0258]-	quiz
+
+imprint a value: quiz
+solution:
+	push imprint
+	pop imprinted
+THE only way is this!
+
+finished talking about:
+	arithmetic/logical commands (pseudo-quiz up ahead for me!)
+	memory segment commands (push segment i, pop nonConstantSegment i)
+
+arithmetic/logical commands:
+	add
+	sub
+	neg
+	eq
+	gt
+	lt
+	and
+	or
+	not
+
+
+
+Unit 1.4
+
+[0315]-	everything seen is imaginary!
+
+we need to make an imaginary machine real. What to do?
+	first, we need to map every segment on the RAM (and remember it)
+
+crash course on pointer
+
+time to get into pseudo-assembly (soda assembly)
+
+D = *p (what does that mean?)
+
+*p is memory location that p points at
+	check value at ram0
+	look at value at ram0 value address
+	in hack:
+	@p
+	A=M
+	D=M
+
+what does p-- mean? now D=*p
+	in hack:
+	@p
+	M=M-1
+	A=M
+	D=M
+
+[0406]-	new script!
+	*q = 9
+	q++
+
+[0817]-	how do we represent this in Hack?
+	SP=0
+	stack base address = 256
+
+another new script!
+*SP = 17
+SP++
+
+implementation:
+	@17 // D=17
+	D=A
+	@SP // *SP=D
+	A=M
+	M=D
+	@SP // SP++
+	M=M+1
+
+[0835]-	previous Hack code is implementation for push when i replaces 17
+
+VM translator: receive stream of commands, spit out normal assembly
+Perhaps a good intermediate step would be to spit out pseudo assembly
+
+
+
+Unit 1.5
+
+[1119]-	start with stack, 8 abstract memory segments
+
+push/pop segment i is the syntax for every memory segment
+
+...well... except for the constant memory segment
+
+examples:
+	push constant 17
+	pop local 2
+	pop static 5
+	push argument 3
+	pop this 2
+
+implementation:
+	we have an abstraction
+	we have a Hack RAM
+	SP (stack top)
+	we see LCL
+	stack starts at 256
+	local starts at 1015?
+
+notice: anything two below SP is kaput (dead)
+can be recycled at will
+
+implementation:
+	@17 // D=17
+	D=A
+	@SP // *SP=D
+	A=M
+	M=D
+	@SP // SP++
+	M=M+1
+
+implementation for pop local i
+	@i		# load i
+	D=A		# assign i to D register
+	@LCL	# load LCL=1, value 1015
+	D=M+D	# D = RAM[LCL]+i = RAM[1]+i = 1015+2 = 1017, turn into RAM[1017]
+
+	@SP		# load SP
+	M=M-1	# decrement SP to 257
+	A=M		# goto RAM[257]
+	D=M		# store RAM[257]... but we can no longer put it into where LCL is
+	# This doesn't work anymore because I need 2 D registers but I only have one.
+
+2nd implementation for pop local i
+	@i		# load i
+	D=A		# assign i to D register
+	@LCL	# load LCL=1, value 1015
+	D=M+D	# D = RAM[LCL]+i = RAM[1]+i = 1015+2 = 1017, turn into RAM[1017]
+	@addr	# create temporary variable addr
+	M=D		# set addr's memory value to 1017
+
+	@SP		# load SP
+	M=M-1	# decrement SP to 257
+	A=M		# goto RAM[257]
+	D=M		# store RAM[257]
+
+	@addr	# goto addr
+	A=M		# get RAM[1017]
+	M=D		# RAM[1017]=RAM[257]
+	# Note: There's no cleanup required because the new value at SP will be overwritten.
+
+what I need to do:
+first, calculate what the address at LCL + i is
+then I need to decrement SP
+finally I need to set wherever the address is to wherever SP is
+
+four memory segments together:
+	local, argument - local variables in function, arguments of function
+	this, that - object fields, array entries
+	abstractly, used the same way!
+	implemented in the same way!
+
+pseudo-assembly code for segments:
+	addr = segmentPointer + i, *SP = *addr, SP++
+	addr = segmentPointer + i, SP--, *addr = *SP
+
+common question: where are the four memory segments located?
+	answer: it's handled by the OS
+
+next memory segment is constant:
+	compiler often encounters constants and has to translate them into a constant segment.
+	commands:
+		only push constant i. there's no pop constant i operation - that wouldn't make sense.
+	implementation of commands:
+		push constant i: *SP = i, SP++
+		@i		# i = 2 in this example
+		D=A		# D = 2
+		@SP		# SP = 256 in this example
+		A=M		# A = 256, RAM[256] is selected
+		M=D		# M = I
+		@SP		# SP = 256
+		M=M+1	# SP++
+
+[1400]- Implementing static variables
+
+Static variables should be seen by everyone
+
+Solution: store them in a global space!
+	We need a VM reference "static i" in the file Foo.vm turned into an assembly reference called Foo.i.
