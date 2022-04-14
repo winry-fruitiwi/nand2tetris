@@ -279,7 +279,7 @@ implementation for pop local i
 	D=A		# assign i to D register
 	@LCL	# load LCL=1, value 1015
 	D=M+D	# D = RAM[LCL]+i = RAM[1]+i = 1015+2 = 1017, turn into RAM[1017]
-	@addr	# create temporary variable addr
+	@R13	# create temporary variable addr
 	M=D		# set addr's memory value to 1017
 
 	@SP		# load SP
@@ -287,7 +287,7 @@ implementation for pop local i
 	A=M		# goto RAM[257]
 	D=M		# store RAM[257]
 
-	@addr	# goto addr
+	@R13	# goto addr
 	A=M		# get RAM[1017]
 	M=D		# RAM[1017]=RAM[257]
 	# Note: There's no cleanup required because the new value at SP will be overwritten.
@@ -330,3 +330,54 @@ Static variables should be seen by everyone
 
 Solution: store them in a global space!
 	We need a VM reference "static i" in the file Foo.vm turned into an assembly reference called Foo.i.
+
+create variable @Foo.5 at the end and store the variable locally
+
+static variables will be mapped to RAM[16] through RAM[255] (in case you need so many!)
+
+there is one weird convention: there is no variable sorting so order matters!
+
+previously, Shimon has said nothing about the underlying platform (other than the stack)
+now, we are dealing with the fact that everything is based on one platform for everyone to access.
+
+temp is a fixed 8-place memory segment going from RAM[5..12]
+leaves 3 extra variables to use: R13, R14, and R15.
+Base address: 5
+
+[1041]
+pointer is a fixed two-place segment:
+	push pointer 0/1
+	pop pointer 0/1
+
+accessing pointer 0: accessing THIS
+accessing pointer 1: accessing THAT
+
+funny joke: "with THIS in mind, or with THAT in mind, as you please"
+
+implementation for push pointer 0/1
+	@THIS/THAT	# we use whatever is dictated
+	D=A			# D = 2
+	@SP			# SP = 256 in this example
+	A=M			# A = 256, RAM[256] is selected
+	M=D			# M = I
+	@SP			# SP = 256
+	M=M+1		# SP++
+
+Arithmetic / Logical commands
+	add
+	sub
+	neg
+	eq
+	get?? where did THAT come from?
+	lt
+	and
+	or
+	not
+
+Memory access commands
+	pop segment i
+	push segment i
+
+	(now, for constant, there is no pop)
+
+we don't need to handle branching and function commands yet
