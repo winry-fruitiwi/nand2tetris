@@ -1,3 +1,6 @@
+IMPORTANT: Important items often are CAPS-LOCKed, and I will put a tag in all caps "caps-lock" to search.
+HA means Hack Assembly.
+
 April 11th, 2022
 
 Unit 1.0
@@ -344,6 +347,14 @@ temp is a fixed 8-place memory segment going from RAM[5..12]
 leaves 3 extra variables to use: R13, R14, and R15.
 Base address: 5
 
+
+
+
+
+April 14th, 2022
+
+[Still on Unit 1.5]
+
 [1041]
 pointer is a fixed two-place segment:
 	push pointer 0/1
@@ -368,7 +379,7 @@ Arithmetic / Logical commands
 	sub
 	neg
 	eq
-	get?? where did THAT come from?
+	get?? where did THAT come from? (actually it's a typo for gt)
 	lt
 	and
 	or
@@ -381,3 +392,110 @@ Memory access commands
 	(now, for constant, there is no pop)
 
 we don't need to handle branching and function commands yet
+
+
+
+Unit 1.6
+
+[1120]-	The VM emulator gets VM code to run on your PC, not just the Hack computer.
+
+It's helpful for a number of reasons:
+	Typical uses:
+		Running compiled Jack programs
+		Testing programs systematically
+		Experimenting with VM commands
+		Observing the VM internals like the stack and memory segments (20² lines now!)
+		Observing how the VM is realized on the host platform
+	
+	Personal uses:
+		Tinkering with the program
+		Waiting for some bouncy ball on the screen (that never comes)
+		Pondering Jack code
+		Looking at code without comments and whitespace
+
+The VM emulator's multi-purpose pane allows you to view:
+	Program output
+	Test script
+	Output file
+	Compare file
+
+Test scripts take Name.vm and have NameVME.tst.
+
+if the VM translator passes all the tests, it signals the end of your learning.
+otherwise, it raises a nice red error with lines you need to fix.
+
+I'm being so negative about passing tests because it means you can't learn more.
+On the other hand, when you get an error, it's nice because you can learn more now!
+
+There's no need to delve into the code of test scripts
+	...but who cares about what you "need", gimme the learning opportunities now!
+
+missing elements:
+	sequences of instructions are VM files without the function-return envelope
+	you need to take care of initializations
+
+next: VM emulator demo!
+	fast forward: single step collection
+
+recap:
+	the VM emulator helps us:
+		Run and test high-level programs
+		Understand the VM
+			abstraction
+			implementation
+
+
+
+Unit 1.7
+
+[1316]
+
+CAPS-LOCK
+VM translator review
+	CONVENTION: Write comment for what line you are translating!
+
+Prerequisites for VM translator:
+	Understand VM
+	Understand HA
+	Understand mapping between VM and HA
+
+Source: VM
+	Composed of two fields: arithmetic/logical commands and memory access commands.
+	Arithmetic/Logical commands:
+		add
+		sub
+		neg
+		eq
+		gt
+		lt
+		and
+		or
+		not
+	Memory access commands:
+		pop segment i
+		push segment i
+
+	(technically VM also has branching and function commands, but that's project 8, not 7)
+
+Target: HA
+	C-instructions
+	A-instructions
+	and that is it. very simple language.
+
+Standard VM mapping:
+	VM mapping decisions:
+		How to map the VM's data structures using the host hardware platform
+		How to exprses the VM's commands using the host machine language
+
+	Standard mapping:
+		Specifies how to do the mapping in an agreed-upon way
+		Benefits:
+			Compatibility with other software systems
+			Standard testing
+
+The standard mapping gives:
+	5 stack pointers
+	temp segment
+	3 general perpose registers
+	static variables
+	a giant stack
