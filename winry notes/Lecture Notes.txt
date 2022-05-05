@@ -1,5 +1,10 @@
 IMPORTANT: Important items often are CAPS-LOCKed, and I will put a tag in all caps "caps-lock" to search.
 HA means Hack Assembly.
+I'm using "you" to address myself.
+
+
+
+
 
 April 11th, 2022
 
@@ -14,7 +19,7 @@ preview of end:
 	review of jack
 	get to high-level programs
 	write once, run anywhere! as opposed to write once, fix everywhere
-	java VM: bytecode, give computers  JVM implementation
+	java VM: bytecode, give computers JVM implementation
 	vm translator!
 	translating from one language to an assembly script is a headache
 	use intermediate steps: one compiler, a couple translators, a couple assemblers
@@ -100,15 +105,15 @@ optimal jump: stack
 		function commands
 
 	arithmetic/logical commands are:
-		add	   x + y
-		sub	   x - y
-		neg	   -y
-		eq 	   x == 0 (error? this should be x==y)
-		gt 	   x > y
-		lt 	   x < y
-		and	   x and y
-		or 	   x or y
-		not	   not y
+		add			x + y
+		sub			x - y
+		neg			-y
+		eq			x == 0 (error? this should be x==y)
+		gt			x > y
+		lt			x < y
+		and			x and y
+		or 			x or y
+		not			not y
 
 	observation:
 		any expression that is arithmetic or logical can be evaluated with this stack.
@@ -256,7 +261,7 @@ implementation:
 notice: anything two below SP is kaput (dead)
 can be recycled at will
 
-implementation:
+implementation for push constant i
 	@17 // D=17
 	D=A
 	@SP // *SP=D
@@ -367,7 +372,7 @@ funny joke: "with THIS in mind, or with THAT in mind, as you please"
 
 implementation for push pointer 0/1
 	@THIS/THAT	# we use whatever is dictated
-	D=A			# D = 2
+	D=M			# D = value of THIS/THAT
 	@SP			# SP = 256 in this example
 	A=M			# A = 256, RAM[256] is selected
 	M=D			# M = I
@@ -477,6 +482,14 @@ Source: VM
 
 	(technically VM also has branching and function commands, but that's project 8, not 7)
 
+
+
+
+
+April 15th, 2022
+
+[Still on Unit 1.7]
+
 Target: HA
 	C-instructions
 	A-instructions
@@ -499,3 +512,354 @@ The standard mapping gives:
 	3 general perpose registers
 	static variables
 	a giant stack
+
+
+
+Unit 1.8
+
+The VM translator: usage
+	take myProg.vm
+	run java VMTranslator myProg.vm (depends on language and machine)
+	myProg.asm will be created
+	use Sublime Text(?) to open myProg.asm
+
+Proposed design:
+	Parser:		parses each VM command into its lexical elements
+	CodeWriter:	writes the assembly code that implements the parsed commands
+	Main:		drives the process (VMTranslator)
+
+	Main (VMTranslator)
+	Input: fileName.vm
+	Output: fileName.asm
+
+	Main logic:
+		Constructs a Parser to handle input file
+		Constructs a CodeWriter to handle the output file
+		Marches through the input file, parsing each line and generating code from it.
+
+You need to know how to parse files before starting!
+If you don't know you should probably go look it up.
+
+The parser:
+	Handles the parsing of a single .vm file,
+	Reads a VM command, separates the components, and hands them to the CodeWriter conveniently, and
+	Ignores all whitespace and comments (doesn't remove them, but skips over them)
+
+I call this the HRI or PHRI (pronounced "fry") protocol!
+
+Routine				Arguments			Returns			Function
+
+Constructor			Input file/stream	——				Gets ready to parse input.
+
+hasMoreCommands		——					Boolean			Are there more commands in input?
+
+advance				——					——				Reads next command and makes it current command.
+														Only called if hasMoreCommands is true.
+														There is no initial current command.
+
+arg1				——					string			Using .split(), return splitCommand[0].
+														If C_ARITHMETIC is detected, return entire command.
+
+arg2				——					int				Returns second arg of current command.
+														Only called if C_PUSH, C_POP, C_FUNCTION, or C_CALL.
+
+commandType			——					C_ARITHMETIC,	Returns constant representing type of command.
+										C_PUSH, C_POP,	C_ARITHMETIC is returned for all arithmetic and
+										C_LABEL,		logical commands.
+										C_GOTO, C_IF,
+										C_FUNCTION,
+										C_RETURN,
+										C_CALL
+
+
+CodeWriter API generates assembly code from parsed VM command.
+
+Routine				Arguments			Returns			Function
+
+Constructor			Output file/stream	——				Gets ready to write output.
+
+writeArithmetic		command (string)	——				Writes assembly code that implements C_ARITHMETIC.
+
+writePushPop		push/pop command,	——				Writes assembly code that implements given command.
+					segment (str),
+					index (int)
+
+Close				——					——				Closes output file.
+
+More routines will be added in Project 8!
+
+But you can add private methods to make code more manageable.
+
+[I've worked on project 7 from around April 15 to May 03 and there were several development gaps.]
+
+from enum import Enum
+class Shake(Enum):
+	VANILLA = 7
+	CHOCOLATE = 4
+	COOKIES = 9
+	MINT = 3
+
+for shake in Shake:
+	print(shake)
+
+
+
+
+
+May 3rd, 2022
+
+
+
+Unit 2.1: Program Control
+
+everything was predetermined
+	start at high-level
+	break down to x = -b+sqrt(disc(a,b,c))
+	step back and see abstractions
+
+functions:
+	all functions are abstractions!
+	what about implementation?
+	the basic language can be extended  at  will
+
+	branching: maybe check if a==0
+	compiler translates code
+
+
+
+
+
+May 4th, 2022
+
+
+
+Branching commands:
+	goto label (that's literally @LABEL, 0;JMP)
+	if-goto label (check if current command is -1, jump in that case)
+	label label (add (LABEL))
+Function commands:
+	call function
+	function function
+	return
+
+Take home lessons:
+	Branching
+	Functions
+	Function call-and-return
+	Dynamic memory management
+	Stack processing
+	Pointers
+	Completing the VM implementation
+
+next unit: branching!
+
+
+
+Unit 2.2: Branching
+
+started with arithmetic, logical, memory segment commands
+now working on branching commands 
+
+branching is easy to understand
+usually, we'd just go straight down in program
+branching adds all sorts of curves and twisty-turns!
+
+low-level:
+	unconditional branching
+	conditional branching
+
+pseudo-vm
+	mult's naive while loop uses labels!
+	we don't "have" to worry about the compiler... but I want to
+	if-goto requires a push operation just before the if-goto command
+		pops the top of the stack!
+
+three branching:
+	goto label
+	if-goto label
+	label label
+
+	implementation:
+		translate each branching command into assembly instructions that effect the specified opperation
+		this is simple because the assembly language has similar branching commands!
+
+
+
+Unit 2.3: Functions
+
+high-level programming is just a set of basic functions, plus:
+	Subroutines
+	Functions
+	Procedures
+	Methods
+	And more
+
+where do all of these come from?
+	different languages have different specifications
+	we call these "functions"
+
+how do we implement the notion of FUNCTIONS?
+	a high-level program with a square root and multiplication can be simplified to abstract functions
+	There are two features in VM:
+		primitive operations (fixed) such as add, sub, neg
+		abstract operations (extensible) such as Math.multiply, Math.sqrt, etc.
+		you can try writing more!
+
+if you want to call a function:
+	push all parameters to function
+	call function, execute "magic"
+	result will replace parameters
+
+primitive operators and calling functions just executes a function. 
+
+VM code for naive mult:
+	function mult 2
+	push constant 0
+	pop local 0
+	push constant 1
+	pop local 1
+label LOOP
+	push local 1
+	push argument 1
+	gt
+	if-goto END
+	push local 0
+	push argument 0
+	add
+	pop local 0
+	push local 1
+	push constant 1
+	add
+	pop local 1
+	goto LOOP
+label END
+	push local 0
+	return
+
+functions:
+	function functionName nArgs, where:
+		functionName is the name of the function, and
+		nArgs is a positive integer of arguments.
+
+	call functionName nArgs 2
+		functionName is name of the function
+		nArgs is a positive integer of arguments
+
+	calling function: caller
+	called function: callee
+
+main view:
+	after line 3: stack
+				  _______
+				  |		|
+				  |  3  |
+				  |_____|
+				  |		|
+				  |  8  |
+				  |_____|
+				  |		|
+				  |  5  |
+				  |_____|
+
+	
+	after line 4: stack has 3 and 40
+
+	after line 5: stack has 43
+
+mult view:
+	stack is empty			argument has 8 and 5		local has 0 and 0
+
+	stack has 1 and 5		argument has 8 and 5		local has 0 and 1
+
+	stack now has 40		argument has 8 and 5		local has 40 and 6
+
+
+line triple 7! What to do to make this clever "magic" happen?
+
+for each function call, the code has to:
+	pass parameters from the calling function to the called function
+	determine the return address within the caller's code
+	save the caller's return address, stack, and memory segments
+	jump to execute the called function
+
+think about this as an adventure: you go on a loop and have to arrive at the exact next instruction
+
+for each return, the code has to:
+	return to the caller the value computed by the called function
+	recycle the memory resources used by the called function
+		you MUST push a value onto the stack before you return!!
+	reinstate the caller's stack and memory segments
+	jump to the return address in the caller's code
+
+
+
+Unit 2.4: Function Call and Return: Implementation Preview
+
+How to implement call, function, and return:
+	2.4 = Implementation Preview 
+	2.5 = Run-time simulation
+	2.6 = Detailed implementation
+
+function execution:
+	A program usually has many functions
+	1-2 functions are executing at the same time usually
+	Calling chain: foo>bar>sqrt>...
+
+for each function in chain, we have to maintain the state of the function
+
+function state is also imaginary
+
+working stack and some segments should be:
+	created when the function starts runnign,
+	maintained as long as the function is executing
+	recycled when the function returns
+
+how do we maintain all of these states?
+	calling pattern is LIFO (last in first out, stack)
+	___ (upper hand)
+	 ↑
+	 |
+	___ (lower hand)
+	 
+	 |
+	 ↓
+
+	 this VM's favorite datastructure: the stack!
+
+Example! compute 17 * 212 or mult(17, 212)
+
+Net effect was the functions arguments replaced by function value
+
+funny example:
+	You have a robotic Robbie cleaning rugs. It cleans the rug while you watch it.
+	It is running a function as it cleans the rug; that's how it functions (haha).
+	Eventually, you shout: "Hey Robbie, make me a cup of tea!"
+	Robbie stops what it's doing, and runs another function making a cup of tea.
+	Later: Robbie finishes making tea for you. He returns the cup to you.
+	Robbie is done with the tea function, now he is going back to cleaning up.
+
+introduction: the global stack
+
+many pairs of caller-callee up the calling chain
+your stack can only handle so much of that, and will have to save states of other functions
+
+frame only contains four memory segment values even though there are 8 others. Segments:
+	Local
+	Argument
+	This
+	That
+	Static
+	Constant
+	Pointer
+	Temp
+
+uses the same stack for both arithmetic-logical commands and behind-the-scene work!
+behind-the-scene work includes saving addresses
+
+How to compute function(x1, x2, ...)
+Abstraction: call stack with arguments ➜ the value
+
+Implementation: went over it, details later!
+
+"Any sufficiently advanced technology is indistinguishable from magic."
+——Arthur C. Clarke (1962)
