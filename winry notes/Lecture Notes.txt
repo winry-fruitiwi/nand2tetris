@@ -843,6 +843,13 @@ introduction: the global stack
 many pairs of caller-callee up the calling chain
 your stack can only handle so much of that, and will have to save states of other functions
 
+
+
+
+
+2022, May 5th (⅓ birthday!)
+
+
 frame only contains four memory segment values even though there are 8 others. Segments:
 	Local
 	Argument
@@ -863,3 +870,317 @@ Implementation: went over it, details later!
 
 "Any sufficiently advanced technology is indistinguishable from magic."
 ——Arthur C. Clarke (1962)
+
+next up: Run-Time Simulation
+
+
+
+Unit 2.5: Function Call and Return: Run-time Simulation
+
+example program: factorial
+
+function goes into pseudo VM
+
+realized: every time we make a new function, we make a function call!
+
+full code for VM program:
+function main 0
+	push constant 3
+	call factorial 1
+	return
+
+function factorial 0
+	push argument 0
+	push constant 1
+	eq											888th line!							:D
+	if-goto BASECASE
+
+	push argument 0
+	push argument 0
+	push constant 1
+	sub
+	call factorial 1
+	call mult 2
+
+	label BASECASE
+		push constant 1
+		return
+
+
+
+
+
+2022, May 6th
+
+
+Note that the function calls itself once.
+
+two-tier compilation is nice because a compiler compiles the code to about twice as many commands!
+without two-tier compilation, each file would be translated to a giant jumble of assembly.
+
+start with empty global stack when running factorial
+push 3
+call factorial 1 (save main frame)
+jump to exectute factorial
+push 3 and 1
+3 ≠ 1
+if-goto BASECASE (does not work)
+
+push 3, 3, 1
+subtract 1 from 3 = 2
+call factorial at 2
+
+repeat until factorial's local variable becomes 1
+
+jump to the basecase when factorial's arg = 1. code for mult omitted...
+
+question:
+Suppose that function foo pushes two arguments and calls function bar.
+After bar returns, the two argument values that were pushed before the call have disappeared.
+The stack’s topmost value is the value returned by bar.
+Who is responsible for removing the argument values from the stack?
+
+
+☒ The code of the foo function
+
+
+☐ The code of the bar function
+
+
+☐ The VM implementation
+
+
+☐ All answers are incorrect
+
+
+
+Unit 2.6: Function Call and Return Implementation
+
+arbitrary VM computes -(19 * (local 3))
+calls function Bar.mult in the process, coming from class Bar
+
+Calling function's view of contract between caller and callee:
+	Before calling another function, I must push as many arguments as the function expects to get
+	
+	Next, I invoke the function using call functionName nArgs
+	
+	After the called function returns, the argument values that I pushed before the call have disappeared from the stack, and a return value that always exists appears at the top of the stack
+	
+	After the called function returns, all my memory segments are exactly the same as they were before the call (except that temp is undefined and some values of my static segment may have changed)
+
+
+Callee's view of contract between caller and callee:
+	Before I start executing, my argument segment has been initialized with the values passed by the caller
+
+	My local variables has been allocated and initialized to zeroes
+
+	My static segment has been set to the static segment of the VM file to which I belong
+	(memory segments this, that, pointer, and temp are undefined upon entry)
+
+	My working stack is empty
+
+	Before returning, I must push a value onto the stack.
+
+Note that these are basically copied from the video.
+
+
+
+
+
+May 10th, 2022. Note: I don't know where times from May 6th to May 10th go.
+
+
+VM's view of contract between caller and callee:
+	create a translator!
+
+handling call:
+	calls the function, informing that nArgs arguments have been pushed onto the stack
+
+assembly code:
+	push returnAddress
+	push LCL
+	push ARG
+	push THIS
+	push THAT
+	ARG = SP-5-nArgs
+	LCL = SP						999 lines!							:D
+	goto functionName
+	(returnAddress)
+
+
+handling function:
+	starts a function that has nVars local variables
+	generate assembly that moves the return address, reinstates the call state, and then does a goto:
+		foo's return address: return value in caller's code
+
+handling return:
+	the callee is running and adding to the stack...
+
+pseudo-assembly:
+	endFrame = LCL			// endFrame is temporary
+	retAddr = *(endFrame-5)	// consider using R13
+	*ARG = pop()			// repositions return value of the caller
+	SP = ARG + 1			// repositions SP of caller
+	THAT =* (endFrame - 1)	// repositions THAT of the caller
+	THIS =* (endFrame - 1)	// repositions THIS of the caller
+	ARG =* (endFrame - 1)	// repositions ARG of the caller
+	LCL =* (endFrame - 1)	// repositions LCL of the caller
+	goto retAddr			// goes to return address in the caller's code
+
+everything below SP is recycled (kaput!)
+
+
+recap:
+	We showed how to generate the assembly code that, when executed, will end up building and maintaining the global stack during run-time
+
+	This code will implement the function call and return commands and behavior
+
+	The code is language- and platform-independent!
+
+VM language:
+
+☒ Arithmetic/Logical Commands - Unit 1
+☒ Memory Access Commands - Unit 1
+☒ Branching Commands - Unit 2
+☒ Function Commands, the trickiest - Unit 2
+
+
+
+Unit 2.7: VM Implementation on the Hack Platform
+
+big picture: program compilation and translation
+	myProg directory contains Foo.jack and Bar.jack (random names)
+								  ↓
+	myProg directory is compiled into Foo.vm and Bar.vm
+								  ↓
+	myProg directory is translated into myProg.asm
+
+booting: what to do when computer is turned on? (and why is it called booting?)
+	VM programming convention
+		One file in any VM program is expected to be named Main.vm;
+		one VM function in this file is expected to be named main
+
+	VM implementation convention
+		When the VM translator starts running, it starts executing the argument-less OS function Sys.init.
+		Sys.init then calls Main.main, and enters an infinite loop
+
+	Hardwazre platform convention
+		Bootstrap code should be written in assembly
+		SP=256
+		Call Sys.init
+
+Standard mapping of the VM on the Hack platform
+	Hack RAM isn't just a jumble of registers ending with the stack (and it definitely doesn't end there!)
+	It actually consists of: pointers/registers, static, stack, heap, memory mapped I/O, and unused memory
+
+	special symbols in VM: 
+		my photo here: C:\Users\Winry\Desktop\chrome_IPZNIQ51az.png
+
+time to implement this!
+
+
+
+Unit 2.8: VM Translator: Proposed Implementation
+
+honk? Shimon is sitting on a chair and it's being displayed this time!
+reason: unfortunately he broke his leg in a bicycle accident recently. He will sit down for this recording.
+I noticed that the camera zoomed in, so he appears to be standing after he explains his leg injury.
+
+We've implemented the basic functions
+
+Same implementation is parser➜codewriter➜main
+
+Main:
+	input: fileName and directoryName
+	output: fileName.asm or directoryName.asm file.
+
+	process:
+		construct a codeWriter
+		if input is a vm file:
+			constructs a parser to handle the input file
+			marches through input, parsing lines and generating code
+
+
+
+
+
+2022, May 11th
+
+
+		if input is a directory:
+			does the same for every file
+
+	implementation note:
+		extension of main program written in project 7
+
+Parser:
+	PHRI protocol! (search for a capitalized phri)
+
+	implementation notes:								line 1111!							:D \o/ 🎉
+		same parser that was implemented in project 7
+		if your parser doesn't handle branching/function commands, add functionality now.
+
+CodeWriter:
+
+Routine				Arguments				Returns			Function
+
+Constructor			Output file/stream		——				Gets ready to write output.
+
+writeArithmetic		command (string)		——				Implements given arithmetic command.
+
+writePushPop		push/pop command,		——				Implements given memory access command.
+					segment (str),
+					index (int)
+
+Close				——						——				Closes output file.
+
+setFileName			fileName (string)		——				Tells class that a new file needs to be parsed.
+
+writeInit			——						——				Writes bootstrap code that initializes VM.
+
+writeLabel			label (string)			——				Writes a special label for the label command.
+
+writeGoto			label (string)			——				Writes an immediate jump for the goto command.
+
+writeIf				label (string)			——				Writes a conditional jump for the goto command.
+
+writeFunction		functionName (string)	——				Implements the code for the function command.
+					numVars (int)
+
+writeCall			functionName (string)	——				Implements the code for the call command.
+					numArgs (int)		
+
+writeReturn			——						——				Implements the code for the return command.
+
+
+
+Unit 2.9: Project 8: Building the VM Translator, Part II
+
+big picture:
+	objective: build a VM translator that translates the VM lanaguage to the Hack assembly language
+
+testing:
+	run generated code on target platform/CPUEmulator.bat
+	if it works, you've finished the code and you can move on
+	otherwise, redo the program and test with the same test scripts
+
+Test programs:
+	ProgramFlow:
+		BasicLoop and FibonacciSeries
+
+	FunctionCalls:
+		SimpleFunction, NestedCall, FibonacciElement, and StaticsTest
+
+	Testing routine:
+		Load and run a VME test script on the emulator.
+		This loads the respective VM file into the emulator, allowing you to experiment with the code.
+		Use VM translator to translate your VM file. The result will be a similarly named HA file.
+		Load and run a test vile on the CPU emulator.
+		This loads your HA file, runs it, and compares to a compare file (all of the same name).
+
+	BasicLoop is designed to test label and if-goto
+	FibonacciSeries is designed to test all branching commands
+
+	FunctionCalls tests:
+	SimpleFunction is supposed to only test function and return.
+	FibonacciElement tests directory translation.
