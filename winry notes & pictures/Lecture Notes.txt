@@ -1,4 +1,3 @@
-IMPORTANT: Important items often are CAPS-LOCKed, and I will put a tag in all caps "caps-lock" to search.
 HA means Hack Assembly.
 I'm using "you" to address myself.
 
@@ -996,14 +995,14 @@ VM's view of contract between caller and callee:
 handling call:
 	calls the function, informing that nArgs arguments have been pushed onto the stack
 
-assembly code:
+pseudo-assembly:
 	push returnAddress
 	push LCL
 	push ARG
 	push THIS
 	push THAT
 	ARG = SP-5-nArgs
-	LCL = SP						999 lines!							:D
+	LCL = SP
 	goto functionName
 	(returnAddress)
 
@@ -1021,13 +1020,13 @@ pseudo-assembly:
 	retAddr = *(endFrame-5)	// consider using R13
 	*ARG = pop()			// repositions return value of the caller
 	SP = ARG + 1			// repositions SP of caller
-	THAT =* (endFrame - 1)	// repositions THAT of the caller
-	THIS =* (endFrame - 1)	// repositions THIS of the caller
-	ARG =* (endFrame - 1)	// repositions ARG of the caller
-	LCL =* (endFrame - 1)	// repositions LCL of the caller
+	THAT = *(endFrame - 1)	// repositions THAT of the caller
+	THIS = *(endFrame - 1)	// repositions THIS of the caller
+	ARG = *(endFrame - 1)	// repositions ARG of the caller
+	LCL = *(endFrame - 1)	// repositions LCL of the caller
 	goto retAddr			// goes to return address in the caller's code
 
-everything below SP is recycled (kaput!)
+everything above SP is recycled (kaput!)
 
 
 recap:
@@ -1051,9 +1050,9 @@ Unit 2.7: VM Implementation on the Hack Platform
 big picture: program compilation and translation
 	myProg directory contains Foo.jack and Bar.jack (random names)
 								  ↓
-	myProg directory is compiled into Foo.vm and Bar.vm
+	    myProg directory is compiled into Foo.vm and Bar.vm
 								  ↓
-	myProg directory is translated into myProg.asm
+	      myProg directory is translated into myProg.asm
 
 booting: what to do when computer is turned on? (and why is it called booting?)
 	VM programming convention
@@ -1088,7 +1087,7 @@ I noticed that the camera zoomed in, so he appears to be standing after he expla
 
 We've implemented the basic functions
 
-Same implementation is parser➜codewriter➜main
+Same implementation is parser→codewriter→main
 
 Main:
 	input: fileName and directoryName
@@ -1116,7 +1115,7 @@ Main:
 Parser:
 	PHRI protocol! (search for a capitalized phri)
 
-	implementation notes:								line 1111!							:D \o/ 🎉
+	implementation notes:
 		same parser that was implemented in project 7
 		if your parser doesn't handle branching/function commands, add functionality now.
 
@@ -1183,4 +1182,139 @@ Test programs:
 
 	FunctionCalls tests:
 	SimpleFunction is supposed to only test function and return.
-	FibonacciElement tests directory translation.
+	NestedCall is an intermediate test call when SimpleFunction works and FibonacciElement does not.
+	FibonacciElement tests directory translation and function calling.
+	StaticsTest makes sure you handle different file values properly.
+
+
+
+
+
+June 23rd, 2022 (yeah we were working on the project for a looong time...)
+
+
+
+Unit 3.1: The Jack Language in a nutshell
+
+Jack is multi-purpose, Object oriented program
+After learning another programming language with abstraction-implementation, OOP, and 
+application design/implementation this should not be too hard.
+
+First program: Hello World
+	The classic hello world program. o/
+	Whitespace
+
+
+
+Second program: Procedural Processing
+	declare variables with var
+
+	Jack only deals with integers
+	Jack arrays are not typed
+
+
+
+Unit 3.2: Object-Based Programming
+
+OO Programming: using a class
+	Fraction API
+	Users using an abstraction don't need to know anything about its implementation
+	They just need the API (Application Programming Interface)
+
+OO programming: building a class
+	In Jack, a field is declared with the field keyword
+	Fraction's fields are numerator and denominator, which are both integers (ints)
+
+	2 accessors: getNumerator and getDenominator, returning numerator and denominator
+	Accessors are REQUIRED for jack classes, they are not public!
+
+	In Jack, you need a constructor for every class.
+		This constructor can call methods from within the class. I've never tried that!
+
+	Euclid developed an algorithm for GCD that I don't understand.
+
+	this is a reference to the current object
+	A constructor has to return this.
+
+	You must dispose of yourself when you're done as a class!
+	use "do Memory.deAlloc(this);"
+		Used because Jack doesn't have garbage collection.
+
+	The client usually thinks of classes as blocks.
+		I don't think of blocks, though. I think of the object imagined in reality.
+
+
+
+Unit 3.3: List Processing
+
+A list is represented by the atom null or an atom followed by a list
+
+lists can be initialized with syntax list.new(int, list.new(int, ...))
+
+do something.print() is really invasive for the client!
+
+recursive access is demonstrated by repeated disposal.
+
+
+
+Unit 3.4: Jack Language Specification: Syntax
+
+Syntax elements:
+	Whitespace / Comments
+	Keywords
+	Symbols
+	Constants
+	Identifiers
+
+Whitespace/Comments: Ignore them!
+Keywords: Some of these keywords are implicit, used to make writing the compiler easier.
+Symbols: Non-letter, non-number, non-variable-name characters.
+Constants: Strings, numbers, bools, etc.
+Identifiers: Names that no compiler man cares about.
+
+
+
+Unit 3.5: Jack Language Specification: Data Types
+
+There are several primitive types:
+	Int: Non-negative 2's complement 16-bit integer.
+	Boolean: True or false
+	Character: Unicode Character
+	Negative integers are actually expressions.
+
+There are a couple class types:
+	OS types: String, Array
+	User-defined types: Fraction, List
+
+Type conversions:
+	Characters can be converted into each other.
+	An object can be converted into an Array and vice versa.
+
+Jack datatypes are pretty primitive, there are only 3 categories, and it's weakly typed!
+
+
+
+Unit 3.6: Jack Language Specification: Classes
+
+Classes that provide functionality:
+	Math class API provides many mathematical operations (hopefully efficient!)
+	Only functions, is a library! /read
+
+	OS purpose:
+		Closes gaps
+		Provides efficient implementations of ADTs and functions
+		Contains classes
+		Similar to Java's standard class library.
+
+
+
+Unit 3.7: Jack Language Specification: Methods
+
+Last language specificiation unit!
+
+Strings can be created by a loop that uses String's appendChar method
+OR they can be created with syntactic sugar, with let String s = "string"
+
+Arrays are not typed, and can hold any type.
+
+There is no operator priority in Jack, the only way to "enforce" this is using parenthenses. I can enforce it in my compiler though.
