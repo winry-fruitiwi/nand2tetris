@@ -1318,3 +1318,52 @@ OR they can be created with syntactic sugar, with let String s = "string"
 Arrays are not typed, and can hold any type.
 
 There is no operator priority in Jack, the only way to "enforce" this is using parenthenses. I can enforce it in my compiler though.
+
+
+
+Unit 3.8: Developing Apps using the Jack language and OS
+
+Handling output: Text/Graphics
+	There are several screen methods:
+		clearScreen()
+		setColor(boolean b)
+		drawPixel(int x, int y)
+		drawLine(int x1, int y1, int x2, int y2)
+		drawRectangle(int x1, int y1, int x2, int y2)
+		drawCircle(int x, int y, in r)
+
+Handling input:
+	There are several Keyboard methods:
+		keyPressed()
+		readChar()
+		readLine(String message)
+		readInt(String message)
+
+Jack character set:
+	I think I caught a typo. I don't think B should have a keycode of 55, as A is 65.
+
+Jack OS:
+	Math
+		2 of these functions, multiply and divide, are unused.
+	String
+		Several useful methods including keycodes of backspace and keys like that.
+	Array
+		Dispose of and add to arrays. That's all the functionality.
+	Memory
+		peek, poke, allocate, and de-allocate. Very mischevious.
+	Sys
+		halt, error, and wait!
+	Output
+		Lots of nice printing functions
+	Screen
+		Draw methods
+	Keyboard
+		Allows reading.
+
+
+
+Unit 3.9: A Sample Jack App: Square Dance
+
+SquareGame demo!
+
+
