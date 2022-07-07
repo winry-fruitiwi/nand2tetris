@@ -1367,3 +1367,101 @@ Unit 3.9: A Sample Jack App: Square Dance
 SquareGame demo!
 
 
+
+Unit 3.10: Graphics Optimization
+
+Graphics are usually made of sprites
+See/access memory with Memory.peek/poke
+
+Use the bitmap editor for more advanced sprites and use Memory.poke!
+
+
+
+Unit 3.11: Perspectives
+
+Three questions:
+	Jack language weak-typing
+	Inconventional "let" and "do" statements
+	Why Jack is so primitive
+
+
+
+
+
+July 7th
+
+
+
+Unit 4.1: Syntax Analysis
+
+We want to compile a class into machine language using two-tier compilation.
+First-tier compilation language names:
+	Jack - VM code
+	Java - Bytecode
+	C# - IEL?
+Then we put all our VM code into the VM translator. We already made that.
+We will write the compiler now.
+
+This module: Syntax analyzer broken up into tokenizer and parser, producing XML code
+Next module: actual code generator taking XML code, producing VM code
+
+Why write a compiler?
+	Gives knowledge of best practices and core ideas for big data management projects
+	Allows you to understand compilers and understand high-level languages more
+	Bonus for me: gives me perspective on why (and how!) certain OS or language functions were defined
+
+
+
+Unit 4.2: Lexical Analysis
+
+To the tokenizer this just looks like a stream of characters.
+Tokenizing = grouping characters into tokens
+Tokens are strings of characters that just have a meaning.
+
+There are 5 types of tokens:
+Keywords			class, constructor, function, method, field, statuc, var, int,
+					char, boolean, void, true, false, null, this, let, do, if, else,
+					while, return
+
+Symbols				{  }  (  )  [  ]  '.'  ','  ';'  +  -  *  /  &  |  <  >  =  ~
+
+Integer constants	a decimal number in the range 0 to 32767
+
+String constants	' " ' a sequence of unicode characters, not including double quote or
+					newline ' " '
+
+Identifiers			a sequence of letters, digits, and underscore ('_') not starting with
+					a digit.
+
+output for code block:
+if (x < 0) {
+	// prints the sign
+	let sign = "negative";
+}
+
+is supposed to be a bunch of XML:
+	<keyword> if </keyword>
+	<symbol> ( </symbol>
+	<identifier> x </identifier>
+	<symbol> < </symbol>
+	...
+
+
+
+Unit 4.3: Grammars
+
+A grammar is a set of rules describing the permutations of tokens (order matters!) that can be combined to create valid language constructs, whether it makes sense or not.
+
+Grammar of jack (subset):
+	statement: ifStatement, whileStatement, letStatement (separated by | or "or"s)
+	statements: statement* (0 or more appearances of a statement)
+	ifStatement: 'if' '(' expression ')' '{' statement '}'
+	letStatement: 'let' varName '=' expression ';'
+	expression: term (op term)?
+	term: varName|constant
+	varName: a string not beginning with a digit
+	op: '+'|'-'|'='|'>'|'<'
+
+our brains do this, but with an ADDED feature!
+	We can still understand sentences that have small discrepancies, otherwise poets wouldn't exist and some literature would be lost forever.
+	Compilers don't have this effect, but I'm pretty sure that with some neural circuitry I could squeeze in one of these small effects...
