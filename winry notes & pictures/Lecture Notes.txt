@@ -1465,3 +1465,40 @@ Grammar of jack (subset):
 our brains do this, but with an ADDED feature!
 	We can still understand sentences that have small discrepancies, otherwise poets wouldn't exist and some literature would be lost forever.
 	Compilers don't have this effect, but I'm pretty sure that with some neural circuitry I could squeeze in one of these small effects...
+
+
+
+Unit 4.4: Parse Trees
+
+A parse tree is made from the tree datastructure in programming.
+It is read from top to bottom.
+It starts with a root and branches down to the 'leaves' or terminal/last nodes.
+In this case, the leaves are the actual tokens.
+
+In english there can be multiple interpretations per sentence, but in coding languages this is not possible.
+
+XML can be used to describe a parse tree but it's really messy!
+
+
+
+
+
+July 8th
+
+
+
+Unit 4.5: Parser Logic
+
+The parser is made of sets of:
+	compile{rule, these curly brackets are not part of the function}() {
+		// code for compiling the rule
+	}
+
+Parsing logic:
+	Follow right-hand side of the rule, and parse the input accordingly
+	If the right-hand side specifies a non-terminal 'Rule', call compileRule
+	Do this recursively!
+
+Detailed sim of parsing logic for while statement!
+
+
