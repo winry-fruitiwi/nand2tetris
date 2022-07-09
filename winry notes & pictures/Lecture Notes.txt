@@ -1501,4 +1501,40 @@ Parsing logic:
 
 Detailed sim of parsing logic for while statement!
 
+LL grammar can be parsed by a rescursive dsecent parser (what?) without backtracking
+LL(k) parser is a parser that needs to look ahead at most k tokens to determine the rule.
+Current grammar is LL(1) but English is something like LL(7)
 
+
+
+Unit 4.6: The Jack Grammar
+
+The entire jack grammar can be fit into one page!
+
+Jack grammar: lexical elements
+	Most of the terminal rules.
+
+Jack grammar: program structure
+	Collection of classes, compiled separately.
+
+Jack expressions make the Jack language LL(2) instead of LL(1).
+	Otherwise, Jack is just LL(1).
+
+Expressions have complicated syntax and you need to look for tokens.
+
+
+
+Unit 4.7: The Jack Analyzer
+
+we use XML to prove that our parser 'understands' code
+	...although technically it's just spitting it out
+	By the way I'm not sure if neural networks actually make a computer 'smart'. It's just that the output is wired to make a computer 'intelligent'. Is that true?
+
+XML is nested like a tree
+
+
+
+
+Unit 4.8: The Jack Analyzer: Proposed Implementation
+
+The jack analyzer represents a class that will use the tokenizer to determine what the tokens are. The tokenizer will use hasMoreTokens, advance, and tokenType.
