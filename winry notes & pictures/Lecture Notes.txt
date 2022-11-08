@@ -1528,7 +1528,7 @@ Unit 4.7: The Jack Analyzer
 
 we use XML to prove that our parser 'understands' code
 	...although technically it's just spitting it out
-	By the way I'm not sure if neural networks actually make a computer 'smart'. It's just that the output is wired to make a computer 'intelligent'. Is that true?
+	By the way I'm not sure if neural networks actually make a computer 'smart'. It's just that the output is wired to make a computer 'intelligent'. It's still ju Is that true?
 
 XML is nested like a tree
 
@@ -1538,3 +1538,113 @@ XML is nested like a tree
 Unit 4.8: The Jack Analyzer: Proposed Implementation
 
 The jack analyzer represents a class that will use the tokenizer to determine what the tokens are. The tokenizer will use hasMoreTokens, advance, and tokenType.
+
+Jack tokenizer API:
+	Constructor - opens input jack file and gets ready to tokenize it.
+		Notes: I would just tokenize it right away! (oops, this is incorrect)
+	
+	hasMoreTokens - Are there more tokens in the input? Returns boolean.
+	
+	advance - Gets next token from input and makes it the current token.
+	
+	tokenType - Returns KEYWORD, SYMBOL, IDENTIFIER, INT_CONST, STRING_CONST.
+		Notes: Any of these constants can be the type of the current token.
+
+	keyWord - Returns the current token. Called if the token type is KEYWORD.
+
+	symbol - Returns the current token. Called if the token type is SYMBOL.
+
+	identifier - Returns the current token. Called if the token type is IDENTIFIER.
+
+	intVal - Returns the current token. Called if the token type is INT_CONST.
+
+	stringVal - Returns the current token without quotes. Called if the token type is STRING_CONST.
+
+CompilationEngine design:
+	For every non-terminal rule, CompilationEngine runs a compilation method for that rule.
+
+CompilationEngine API:
+	Constructor - Creates new compilation engine with the given input and output.
+
+	compileClass - Compiles a complete class.
+
+	compileClassVarDec - Compiles a static variable/field declaration.
+
+	compileSubroutineDec - Compiles a complete method, function, or constructor.
+
+	compileParameterList - Compiles a parameter list. Doesn't handle enclosing ().
+
+	compileSubroutineBody - Compiles a subroutine's body.
+
+	compileVarDec - Compiles a var declaration.
+
+	compileStatements - Compiles a sequence of statements. Doesn't handle enclosing {}.
+
+	compileExpression  - Compiles an expression.
+
+	compileTerm - Compiles a term.
+
+	compileExpressionList - Compiles a comma-separated list of expressions.
+
+
+
+Unit 4.9: Project 10: Building a Syntax Analyzer
+
+Goals:
+	Implement syntax analyzer
+	Use to parse all supplied jack files
+	For each test file, analyzer should produce XML identical to supplied comp. file
+
+Tools and resources:
+	Test programs and compare files
+	TextComparer: nand2tetris/tools
+	XML file viewer: you use your own application
+
+Implementation plan:
+	Build jack tokenizer
+	Build compilation engine:
+		Basic version (everything but expressions)
+		Complete version (everything, no exceptions)
+
+XML anomalies:
+	all code is wrapped in <tokens> tag so that it's loaded into browser well
+	string constants don't have double quotes
+	certain special characters are outputted with &identifier;
+
+some files have	expressionless variations that don't make sense
+however they're used to test all parsing abilities for non-expression tokens
+
+
+
+Unit 5.1: Code Generation
+
+learning about how to compile code is important because it gives people a deeper understanding of what takes place when they are running their code.
+	Bonus: It also gives me extra thoughts when I'm bored about how to parse Java, Python, Javascript, and even HTML.
+
+Roadmap: Jack program runs through Jack Compiler and turns into VM code
+Jack Compiler: in the past, we only had the syntax analyzer with the tokenizer and the parser or the Compilation Engine. Now we need the code generator or CG.
+XML is no longer relevant.
+
+Parser is partially rewritten, Code Generator is built from the ground up.
+
+try to simplify complicated coding tasks.
+	Simplification 1: Each file is its own class and deserves its own compiler.
+	Simplification 2: You only ned to compile the declaration of the class, then one subroutine at a time.
+
+What does one see in a subroutine?
+	Variables
+	Expressions
+	Flow of Control
+	Objects
+	Arrays
+
+	We need to handle all of these. One unit is dedicated to each challenge.
+	...well except for objects.
+
+High-level languages are very advanced and complicated with lots of semantics.
+VM is very simple. No classes, no subroutines, just a stream of commands.
+
+Learn how to implement procedural code, arrays, and objects.
+Techniques: Parsing, Recursive compilation, Code generation, Symbol tables, and Memory management (very lightly touched on here)
+
+Next up: handling variables.
