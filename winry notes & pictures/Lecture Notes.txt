@@ -1734,3 +1734,26 @@ variables + expressions + flow of control = compiler for simple procedural langu
 	...but we still need to handle arrays and objects
 a lot of the compiler is done in the parsing
 because we already finished the previous tiers of the cake, we don't need to think about how we got it. we just move onto the next cake tier and make a great birthday party, because it's Mommy's birthday today.
+
+
+
+Unit 5.5: Handling Objects: Low-Level Aspects
+
+VM doesn't handle objects, as they only have virtual memory segments
+it's even worse in low-level machine programs!
+the challenge is to bridge the big gaps
+
+first five entries hold stack pointer, local pointer, argument pointer, this pointer, and that pointer
+there is a special place called the stack
+local and argument variables are located on the stack, managed by VM translator
+
+the heap handles object and array data
+you might have many vars on the heap!
+we need to use THIS and THAT, but first use pointer segment
+managed by VM code
+
+access RAM words 8000 onward
+first anchor THIS
+then access THIS i
+this is the basic technique for accessing object and array data
+first anchor using pointer
