@@ -1648,3 +1648,60 @@ Learn how to implement procedural code, arrays, and objects.
 Techniques: Parsing, Recursive compilation, Code generation, Symbol tables, and Memory management (very lightly touched on here)
 
 Next up: handling variables.
+
+
+
+Unit 5.2: Handling Variables
+
+sum = x * (1 + rate)
+stream of VM code is generated after compilation.
+let's only focus on variables.
+
+to generate VM code, we need to know the virtual segments each variable is in.
+handle class-level and subroutine-level variables
+
+each variable has a name, type, kind or role and a scope.
+more specifically, an identifier, an int/char/boolean/classname, a field/static/local/argument, and a class-level or subroutine-level scope.
+
+variable properties are needed for code generation, and can be managed efficiently with a symbol table. (hey that's like in the assembler!)
+
+sample code:
+class Point {
+	field int x, y;
+	static int pointCount;
+
+	method int distance(Point other) {
+	var int dx, dy;
+	let dx = x - other.getx();
+	let dy = y - other.gety();
+	return Math.sqrt((d*dx)+ (dy*dy));
+	}
+}
+
+class-level variables with columns name, type, kind, and # of its kind
+
+subroutine has this, then its vars
+
+class-level symbol table is reset every time we compile a new class
+subroutine symbol tables are reset every compiling of a subroutine call
+codeWriter will not write anything during var dec. write only during var handling
+
+
+general observations: vary in terms of var types, kinds, and scoping
+they can be modified to handle variable compilation in other languages
+
+Now that we know how to handle variabldes, we can move onto handling expressions!
+
+
+
+Unit 5.3: Handling Expressions
+
+infix example: a * (b + c)
+prefix example: *a +bc
+postfix: a b c + *
+
+stack language is very postfix-oriented
+
+source code: x + g(2,y,-z) * 5
+generate parse tree, then generate stack machine code.
+
