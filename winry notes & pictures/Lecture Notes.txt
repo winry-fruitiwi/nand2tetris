@@ -1757,3 +1757,64 @@ first anchor THIS
 then access THIS i
 this is the basic technique for accessing object and array data
 first anchor using pointer
+
+
+
+Unit 5.6: Handling Objects: Construction
+
+the compiler doesn't care about the objects
+initialize a class variable as a location on the stack.
+when let statement is used, initialize p1 as location of the stack on the heap
+what happens when there are multiple classes?
+
+only update relevant symbol table when vars are handled
+all we need to do is call the constructor!
+the caller needs the constructor to allocate space for itself
+pop base addres of the new object
+what about the impact?
+
+during compile-time, the compiler maps p1v, p2, and d on local 0, 1, and 2
+only during runtime go to work do we allocate space on RAM
+A constructor typically arranges creation of new objects and initializes it to an initial state, so it needs access to the object's fields
+The constructor's code can access the object's data using the THIS segment!
+however, we need to anchor the THIS segment with pointer
+for fields and statics, make class-level symbol table update
+we should find a free memory block on the RAM equal to the number of vars needed
+provide alloc with a number and it will find a block of empty code of num's length. implemented in OS
+align this with the base address of memory.alloc
+
+every jack compiler returns this, so push pointer 0 and return
+
+for code block:
+"
+constructor Point new(int ax,
+					  int ay) {
+  let x = ax;
+  let y = ay;
+  let pointCount = pointCount + 1;
+  return this;
+}
+"
+
+you get:
+"
+push constant 2
+call Memory.alloc 1
+pop pointer 0
+
+// let x = ax; let y = ay;
+push argument 0
+pop this 0
+push argument 1
+pop this 1
+
+// let pointCount = pointCount + 1;
+push static 0
+push constant 1
+add
+pop static 0
+
+// return this
+push pointer 0
+return
+"
