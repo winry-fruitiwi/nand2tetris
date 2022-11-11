@@ -1868,3 +1868,49 @@ translated into:
 
 void methods are similar to normal ones, but they always have to return a value
 the dummy value is dumped in some place. sadly it can't be dumped into constant
+
+
+
+Unit 5.8: Handling Arrays
+Confusion cleaner activated! I didn't realize you had to pass in a size argument for arrays. It makes their compilation a lot easier.
+
+THIS and THAT are "portable" because their starting address can be moved.
+set THIS and THAT with pointer 0 and pointer 1
+
+example for THIS and THAT manipulation
+VM is extremely secure! it isn't even handling the RAM most of the time.
+
+array access is a bit difficult because if there are multiple arrays being accessed, you can get a pointer overwriting error!
+instead of pointer, use temp
+
+example:
+"a[i] = b[j]"
+
+generated code:
+"
+push a
+push i
+add
+
+push b
+push j
+add
+
+pop pointer 1
+push that 0
+pop temp 0
+
+pop pointer 1
+push temp 0
+
+pop that 0
+
+"
+
+arr[expression₁] = expression₂: expression₂ can use pointer 1 and that 0 safely
+
+this solution also works for ginormous expressions like a[a[i]] = a[b[a[b[j]]]]
+
+
+
+
