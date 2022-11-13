@@ -1797,6 +1797,7 @@ constructor Point new(int ax,
 "
 
 you get:
+
 "
 push constant 2
 call Memory.alloc 1
@@ -1817,4 +1818,53 @@ pop static 0
 // return this
 push pointer 0
 return
+
 "
+
+
+
+5.7: Handling Objects: Manipulation
+
+how to compile methods?
+you need to rewrite the OO method calls in a procedural style
+this is why you always need self as an argument, because you pass it in during the call!
+
+example:
+	"obj.foo(x1, x2, ..)"
+	translated (approximately) into:
+		"
+		push obj
+		push x1
+		push x2
+		push ...
+		call foo
+		"
+caller's code:
+"let d = p1.distance(p2);"
+
+method and variable declarations do nothing
+anchor this to correct segment
+
+translated into:
+	"
+	push argument 0
+	pop pointer 0
+	push this 0
+	push argument 0
+	call Point.getx 1
+	sub
+	pop local 0
+	// dy statement is very similar
+	push local 0
+	push local 0
+	call Math.multiply 2
+	push local 1
+	push local 1
+	call Math.multiply 2
+	add call Math.sqrt 1
+	return
+
+	"
+
+void methods are similar to normal ones, but they always have to return a value
+the dummy value is dumped in some place. sadly it can't be dumped into constant
