@@ -1989,6 +1989,110 @@ VMWriter emits code to output VM file.
 VMWriter API:
 	Constructor - Creates new write-only output .vm file. Args: file/stream.
 
-	writePush - Writes "push" + segment + index. Args: segment, index.
+	writePush - Writes "push" + segment + index. Args: segment, index. Trivial.
 
-	
+	writePop - Writes "pop" + segment + index. Args: segment, index. Trivial.
+
+	writeArithmetic - writes an arithmetic command. Args: command. Trivial.
+
+	writeLabel - writes a label command. Trivial.
+
+	writeGoto - writes a goto command. Trivial.
+
+	writeIf - writes an if-goto command. Trivial.
+
+	writeCall - writes a call command. Trivial.
+
+	writeFunction - writes a function command. Trivial.
+
+	writeReturn - writes "return". Trivial.
+
+	close - closes the output file. Trivial.
+
+this is just an encapsulation.
+
+
+CompilationEngine overview:
+	gets input from a jack tokenizer and writes output using the VM writer
+
+	Contract:
+		Each compile routine should read from the input, advance, then emit with VMWriter
+		compileXXX should only be called if XXX is the current syntactic element
+		If XXX is part of an expression and has a value, emitted VM code should compute the value and leave it at the top of the VM's stack
+
+CompilationEngine implementation notes:
+	The CompilationEngine API is identical to the CompilationEngine API is the same as the one in the Syntax Analyzer!
+	Start with SyntaxAnalyzer, morph it into full scale compiler
+
+the next unit is about guidelines for this module.
+
+
+
+Unit 5.11: Project 11
+
+Project 11 is just for extending the syntax analyzer into a full-scale compiler
+Stage 0 is syntax analyzer, stage 1 is symbol table handling
+stage 2 is the actual code generation
+
+Stage 1: the output of an identifier is just identifier. We can change that.
+
+SymbolTable testing plan:
+	Implementation: implement it then extend syntax analyzer with identifier handling above
+This allows the symbol table to be unit-tested with project 10 test cases
+
+Project 11 gives test programs (six in fact)
+
+test evolving compiler on supplied test programs in the shown order:
+	Seven
+	ConvertToBin
+	Square
+	Average
+	Pong
+	ComplexArrays
+
+use compiler to compile the progran directory
+
+
+For each test program:
+	1. Use compiler to compile program directory
+	2. Check generated code, fix compiler and go back to test & stage 1 as needed
+	3. Load directory into VM emulator
+	4. Run the compiled program, inspect results
+	5. If there's a problem, fix compiler and go back to stage 1
+
+the only difference in the mindset of the testing is that the compiler is incorrect when the code breaks, not the code!
+
+Test program: Seven
+	Tests how your compiler handles class, do, return, and simple arithmetic
+	output should look something like this:
+		"
+		function Main.main 0
+		push constant 1
+		push constant 2
+		push constant 3
+		call Math.multiply 2
+		add
+		call Output.printInt 1
+		pop temp 0
+		push constant 0
+		return
+
+		"
+
+	you must see 7 at the top-left corner of the screen
+
+
+Test program: decimal-to-binary conversion
+	tests how your compile handles expressions and procedural constructs
+
+Test app: Square
+	Tests constructors, methods, and expressions that include method calls
+
+Test program: average
+	Tests how your compiler handles arrays and strings
+
+Test app: Pong
+	Tests how your compiler handles a complete object-oriented application, including the handling of objects and static variables.
+
+Test program: ComplexArrays
+	Tests how your compiler handles long, hairy array manipulation.
