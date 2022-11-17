@@ -2096,3 +2096,15 @@ Test app: Pong
 
 Test program: ComplexArrays
 	Tests how your compiler handles long, hairy array manipulation.
+
+
+
+Unit 5.12: Perspective
+
+Question 1: Jack is relatively simple, how to generate complex language code?
+	there are few types in Jack but there are a lot in complex languages
+	there is also no inheritance or global variables
+Question 2: How difficult would it be to close the gaps between Java and Jack?
+	actually it's quite difficult
+Question 3: What does compiler optimization mean?
+	it's not about making the compiler efficient. It's that VM code generation is optimized.
