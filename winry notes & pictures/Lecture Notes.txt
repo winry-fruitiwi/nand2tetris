@@ -1063,7 +1063,7 @@ booting: what to do when computer is turned on? (and why is it called booting?)
 		When the VM translator starts running, it starts executing the argument-less OS function Sys.init.
 		Sys.init then calls Main.main, and enters an infinite loop
 
-	Hardwazre platform convention
+	Hardware platform convention
 		Bootstrap code should be written in assembly
 		SP=256
 		Call Sys.init
@@ -1690,7 +1690,7 @@ codeWriter will not write anything during var dec. write only during var handlin
 general observations: vary in terms of var types, kinds, and scoping
 they can be modified to handle variable compilation in other languages
 
-Now that we know how to handle variabldes, we can move onto handling expressions!
+Now that we know how to handle variables, we can move onto handling expressions!
 
 
 
@@ -1698,7 +1698,7 @@ Unit 5.3: Handling Expressions
 
 infix example: a * (b + c)
 prefix example: *a +bc
-postfix: a b c + *
+postfix example: a b c + *
 
 stack language is very postfix-oriented
 
@@ -2082,13 +2082,13 @@ Test program: Seven
 	you must see 7 at the top-left corner of the screen
 
 
-Test program: decimal-to-binary conversion
+Test program: DecToBinary
 	tests how your compile handles expressions and procedural constructs
 
 Test app: Square
 	Tests constructors, methods, and expressions that include method calls
 
-Test program: average
+Test program: Average
 	Tests how your compiler handles arrays and strings
 
 Test app: Pong
@@ -2108,3 +2108,89 @@ Question 2: How difficult would it be to close the gaps between Java and Jack?
 	actually it's quite difficult
 Question 3: What does compiler optimization mean?
 	it's not about making the compiler efficient. It's that VM code generation is optimized.
+
+
+
+Unit 6.1: Operating System
+
+plan of course: we're at the OS
+we're developing the nand OS
+typical OS services include tasks like mathematical operations and textual output
+we must support these OS services
+system oriented services include memory management, a file system, UI, multitasking, networking, security, and drivers
+making an OS is a large undertaking!
+8 classes in OS
+math:
+	abs
+	multiply
+	divide
+	min
+	max
+	sqrt
+memory:
+	peek
+	poke
+	alloc
+	deAlloc
+screen:
+	clearScreen
+	setColor
+	drawPixel
+	drawLine
+	drawRectangle
+	drawCircle
+output:
+	moveCursor
+	printChar
+	printString
+	printInt
+	println
+	backspace
+keyboard:
+	keyPresesd
+	readChar
+	readLine
+	readInt
+string:
+	constructor
+	dispose
+	length
+	charAt
+	setCharAt
+	appendChar
+	eraseLasChar
+	intValue
+	setInt
+	backSpace
+	doubleQuote
+	newLine
+array:
+	constructor
+	dispose
+sys:
+	halt
+	error
+	wait
+
+people can make a living out of making OS:
+	theoreticians, making blueprints for the OS services
+	implementers, using theoretician blueprints and implementing them
+	we're both perspectives
+
+take home lessons in module:
+	running-time analysis
+	resource allocation
+	input handling
+	vector graphics
+	textual outputs
+	type conversions
+	string processing
+	and lots, lots more
+
+methodology:
+	classical algorithms
+	ingenious hacks
+	implementation notes
+
+we were slack about efficiency in the past. now in the OS, it's really important
+you can't be inefficient. must be clever about it
