@@ -2194,3 +2194,15 @@ methodology:
 
 we were slack about efficiency in the past. now in the OS, it's really important
 you can't be inefficient. must be clever about it
+
+
+
+Unit 6.2: Efficiency Matters
+
+for widely used operations like math, efficiency really matters!
+repetitive addition for multiply is pretty slow. runtime is O(N)
+
+proposed algorithm: represent each number as bits. multiply it by 2
+multiplier is column. add only columns where i'th bit of y is 1
+runtime of this algorithm is simply the number of bits in a word
+can be implemented very efficiently
