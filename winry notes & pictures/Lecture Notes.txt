@@ -2206,3 +2206,56 @@ proposed algorithm: represent each number as bits. multiply it by 2
 multiplier is column. add only columns where i'th bit of y is 1
 runtime of this algorithm is simply the number of bits in a word
 can be implemented very efficiently
+
+
+
+Unit 6.3: Mathematical Operations
+
+division:
+	Naive implementation: repeated subtraction. O(N) runtime.
+	Better implementation:
+		find largest number x that can, multiplied by divisor, fits into dividend.
+		find remainder, then we do the same thing. recursive algorithm
+		look, we multiplied!
+		runtime: O(log₂(N))
+	Another better implementation:
+		if (y > x) return 0
+		q = divide(x, 2 * y)
+		if ((x - 2 * q * y) < y)
+			return 2 * q
+		else
+			return 2 * q + 1
+
+		runtime O(log₂(N))
+		algorithm involves only addition (wait, what?)
+
+sqrt:
+	No real naive implementation.
+	Implementation: use binary search algorithm
+		y = 0
+		for j=n/2 - 1 ... 0 do
+			if (y+2^j)² <= x then y = y + 2^j
+		return y
+
+multiplication implementation notes
+	Negative numbers
+		two's complement: algorithm works fine. no need to change anything.
+	Overflow
+		algorithm always returns correct answer modulo 2¹⁶
+	Implementing (i'th bit of y)
+		function boolean bit(int x, int i)
+		bit shifting doesn't exist in jack
+		instead, use array holds 16 values 2ⁱ
+		support implementation of bit(x, i) as static class variable
+
+division implementation notes
+	Negative numbers
+		divide |x| by |y| and set result's sign
+
+	Handling y overflow
+		make sure y doesn't become negative!
+		if y>x or y<0 return 0
+
+sqrt implementation notes
+	Handling overflow:
+		handles overflow properly, same manner as in division
