@@ -2259,3 +2259,19 @@ division implementation notes
 sqrt implementation notes
 	Handling overflow:
 		handles overflow properly, same manner as in division
+
+
+
+Unit 6.4: Memory Access
+
+Memory:
+	peek
+	poke
+	alloc
+	deAlloc
+
+	focusing on peek and poke
+
+OS uses low-level services that directly accesses ram, then builds upon these
+
+
