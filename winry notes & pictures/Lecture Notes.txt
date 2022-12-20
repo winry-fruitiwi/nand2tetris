@@ -2265,13 +2265,97 @@ sqrt implementation notes
 Unit 6.4: Memory Access
 
 Memory:
-	peek
-	poke
-	alloc
-	deAlloc
+	☐ peek
+	☐ poke
+	☐ alloc
+	☐ deAlloc
 
 	focusing on peek and poke
 
 OS uses low-level services that directly accesses ram, then builds upon these
 
+function samples
+	let x = Memory.peek(19003) // x becomes 7
 
+	do Memory.poke(19003, -1) // RAM[19003] becomes 11...1, equivalent to -1
+
+how to access RAM from Jack?
+	Naive implementation:
+		doesn't quite work. compiler tries to allocate array in heap, error made.
+
+	Working implementation:
+		static array ram, then set ram to 0 and gets access to ram
+
+	now peek and poke are completely trivial
+
+
+
+Unit 6.5: Heap Management
+
+Memory:
+	☒ peek
+	☒ poke
+	☐ alloc
+	☐ deAlloc
+
+	doing alloc and deAlloc
+
+allocate and recycle memory for objects and arrays
+
+in languages that have garbage collection, you shouldn't need to implement dispose
+
+Heap management simple version:
+	free = heapBase
+
+	add numVars to free in alloc
+
+	do nothing in deAlloc
+
+	Doesn't work! You may run out of memory.
+
+Heap management realistic:
+	linked list for available heap segments
+
+	alloc()
+		if segment.size >= size + 2, then segment is "possible"
+		search free list for either first possible or smallest possible segment
+			first fit is assumed
+		then, carve block of size size+2 from segment
+		return base address of block's data part
+
+	deAlloc()
+		append object to end of freeList
+		the more we recycle, the more freeList becomes fragmented
+
+		defrag will smoosh some fragmented blocks together when needed
+
+
+Implementation notes
+	how to implement heap?
+	static array heap, heap = 2048
+	freeList = 2048
+	let heap[0] = 0
+	let heap[1] = 14335
+
+	initial state: freeList contains one long segment
+	use an array as just a set of pointers
+
+Recap
+	init:
+		freeList = heapBase
+		freeList.size = heapSize
+		freeList.next = 0
+
+	alloc(size):
+		search freeList using best-fit or first-fit heuristics to obtain a segment with segment.size >= size + 2
+
+		if no such segment is found, attempt defragmentation, else raise error.
+
+		block = base address of the found space
+
+		update freeList and the fields of block to account for the allocation
+
+		return block
+
+	deAlloc(object):
+		append object to end of freeList
