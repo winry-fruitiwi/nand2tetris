@@ -2359,3 +2359,37 @@ Recap
 
 	deAlloc(object):
 		append object to end of freeList
+
+
+
+Unit 6.6: Graphics
+
+Screen:
+	☐ clearScreen
+	☐ setColor
+	☐ drawPixel
+	☐ drawLine
+	☐ drawRectangle
+	☐ drawCircle
+
+General graphical observations
+	vector vs bitmap: vector scales up, bitmap is an image that doesn't scale.
+		procreate uses both vector and bitmap
+	bitmap stores sequence of bits, vector stores draw methods
+	vector is great for being:
+		stored
+		transmitted
+		scaled
+		turned into bitmap
+
+		reminds me of SVG
+
+Vector graphics primitives
+	drawPixel(x, y)
+		we took an 8K word chunk and called it a screen memory map
+		how to drawPixel(x, y):
+			address = 32 * y + x/16
+			value = Memory.peek[16384 + address]
+			set the (x % 16)th bit of value to the current color
+			do Memory.poke(address, value)
+	drawLine(x₁, y₁, x₂, y₂) comes in the next video
