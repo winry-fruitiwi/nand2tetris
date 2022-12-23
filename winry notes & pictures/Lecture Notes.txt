@@ -2393,3 +2393,65 @@ Vector graphics primitives
 			set the (x % 16)th bit of value to the current color
 			do Memory.poke(address, value)
 	drawLine(x₁, y₁, x₂, y₂) comes in the next video
+
+
+
+Unit 6.7: Graphics
+
+Screen:
+	☐ clearScreen
+	☐ setColor
+	☒ drawPixel
+	☐ drawLine
+	☐ drawRectangle
+	☐ drawCircle
+
+vector graphics allow for separation of parts of figure
+basic idea: image drawing implemented through drawLine operations
+challenge: draw lines really, really fast
+
+simplifying assumption: focus on lines that go north-east
+in each stage, we must decide if we have to go right or up. how to decide fast?
+
+algorithm:
+
+a=0
+b=0
+diff=0
+while ((a<=dx) and (b<=dy)) // there is more work to do
+	drawPixel(x+a, y+b)
+	if (diff<0),	{a=a+1; diff=diff+dy}
+	else			{b=b+1; diff=diff-dx}
+
+this algorithm only uses addition and subtraction
+
+
+now what about drawing circles?
+
+drawing a filled circle:
+	drawCircle(x, y, r)
+		for each dy=-r to r do:
+			drawLine(x-sqrt(r²-dy²), y+dy, x+sqrt(r²-dy²), y+dy)
+
+drawing an unfilled one:
+	drawCircle(x, y, r)
+		for each dy=-r to r do:
+			drawPixel(x-sqrt(r²-dy²), y+dy)
+			drawPixel(x+sqrt(r²-dy²), y+dy)
+
+Implementation notes:
+	drawPixel
+		requires OS Memory class
+		modulo operator
+	drawLine
+		modify algorithm for screen origin (0, 0)
+		generalize algorithm to draw lines that go in any direction
+		horizontal and vertical lines are special cases
+	drawCircle
+		can potentially lead to overflow
+			however you can limit r to no greater than 181
+
+remaining functions are trivial
+
+
+
