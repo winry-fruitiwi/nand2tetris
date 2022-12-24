@@ -2455,3 +2455,50 @@ remaining functions are trivial
 
 
 
+Unit 6.8: Handling Textual Output
+
+Graphical output is handled by Jack OS class Screen. 256 rows of 512 pixels.
+Textual output is handled by Jack OS class Output. 23 rows of 64 characters.
+
+two types of characters: printable and nonprintable.
+	printable characters display a result in a color.
+	nonprintable chars are not displayed with a color
+
+Challenge: how to make 256 by 512 pixels 23 rows of 64 charactesr in low level.
+
+Each character occupies fixed 11-pixel-high and 8-pixel-wide frame.
+	This is a fixed-width font.
+
+lots of work, but some of it is already done
+
+special private function init map assigning bitmap for each char in char set
+you also need to implement the cursor
+	Must be managed as follows:
+		if asked to display newline, move curser to beginning of next line
+		if asked to display backspase: move the cursor one column left
+		if asked to display any other char: display char, move cursor 1 right
+
+API:
+class Output {
+	function void init () {}
+
+	// moves cursor to j'th column of i'th row, erasing last character
+	function void moveCursor(int i, int j) {}
+
+	// displays c at cursor location, advance cursor to the right
+	function void printChar(char c) {}
+
+	// displays str starting at the cursor location, advances cursor appropriately
+	function void printString(String str) {
+		// implementation is likely simply to iterate through str and printChar
+	}
+
+	// displays i starting at cursor location, advances cursor appropriately
+	function void printInt(int i) {}
+
+	// advances cursor to next line
+	function void println() {}
+
+	// moves cursor one column back
+	function void backSpace() {}
+}
