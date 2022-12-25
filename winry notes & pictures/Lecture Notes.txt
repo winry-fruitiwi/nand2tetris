@@ -2548,3 +2548,71 @@ Implementation notes:
 	readChar: implement algorithm
 	readLine: implement algorithm
 	readInt: read digits and build integer value
+
+
+
+Unit 6.10: String Processing
+
+API:
+	"
+	class String {
+		...
+
+		// erases last character from string
+		method void eraseLastChar() {}
+
+		// returns int value of this string until first non-numeric char
+		method int intValue() {}
+
+		// sets this string to representation of given num
+		method void setInt(int number) {}
+
+		// returns newline char
+		function char newLine() {}
+
+		// returns backspace char
+		function char backSpace() {}
+
+		// returns double quote char
+		function char doubleQuote() {}
+	}
+	
+	"
+
+usually you create var String s and var int x, then append characters to s
+when s.setInt(int) is called, s = str(int)
+then you can use the string's int value for manipulation
+
+most interesting functions: string and int transformations
+
+int to string:
+	int2String(val):
+		lastDigit = val % 10
+		c = character representing lastDigit
+		if val<10:
+			return c as a string
+		return int2String(val/10).append(c)
+
+string to int:
+	string2Int(str):
+		val = 0
+		for (i=0 ... str.length) do
+			d=integer value of str[i]
+			val = val * 10 + d
+		return val
+
+implementation notes
+	represent string as an array
+
+	constructor String new(int maxLength) {
+		let str = Array.new(maxLength);
+		let length = 0;
+		return this;
+	}
+
+	length, charAt, setCharAt, appendChar, eraseLastChar are array manipulations
+
+	intValue and setInt are string2Int and int2String.
+		is this a reference to the course name, nand2tetris?
+
+	newLine, backSpace, doubleQuote return 128, 129, 34, respectively
