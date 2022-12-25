@@ -2502,3 +2502,49 @@ class Output {
 	// moves cursor one column back
 	function void backSpace() {}
 }
+
+
+
+Unit 6.9: Input
+
+in the middle of unused memory space and the screen, there's a single kb register
+	when a key is pressed on the keyboard, kb register is set to scan code
+	when no key is pressed, the keyboard register is set to 0
+
+keyPressed:
+	listens to the keyboard
+	if keyboard key is pressed, return scan code. else return 0.
+
+readChar:
+	waits until keypress and release, echo key, advance, return char value
+	display cursor
+	while (keyPressed() = 0):
+		do nothing
+
+	c=code of current key
+	while (!(keyPressed() = 0)):
+		do nothing
+
+	display c
+	advance cursor
+
+readLine:
+	str = empty string
+	repeat
+		c = readChar()
+		if (c = newLine):
+			display newLine
+			return str
+
+		else if (c = backSpace):
+			remove last char from str
+			do Output.backspace()
+
+		else
+			str = str.append(c)
+
+Implementation notes:
+	keyPressed: use Memory.peek for keyboard register
+	readChar: implement algorithm
+	readLine: implement algorithm
+	readInt: read digits and build integer value
