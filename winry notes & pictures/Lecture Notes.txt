@@ -2616,3 +2616,19 @@ implementation notes
 		is this a reference to the course name, nand2tetris?
 
 	newLine, backSpace, doubleQuote return 128, 129, 34, respectively
+
+
+
+Unit 6.11: Array Processing
+
+should be titled Array Representation
+
+API is trivial: function Array new (int size) and method void dispose().
+
+client will initialize an array, then set a certain element to a value
+
+apparently, "Arrray.new" is a function, not a constructor.
+	So what happened to Array.new? Why isn't it mentioned?
+you have to implicitly use Memory.alloc.
+
+Array.dispose is trivial, just use Memory.deAlloc
