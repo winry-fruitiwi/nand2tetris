@@ -2650,3 +2650,30 @@ Sys.init: initialize OS, then call Main.main()
 Sys.halt: implemented with infinite loop
 Sys.wait: implemented with a loop, machine specific
 Sys.error: prints given error code in form "ERR<errorCode>", and halts
+
+
+
+Unit 6.13: Project 12: Building the OS
+
+the OS is just an abstraction specified by Jack OS API
+as a normal user we would not bother with implementation of OS
+	in nand2Tetris, we will build and realize the OS ourselves
+
+OS implementations are stored in VME and tools. both are implemented in VM
+my implementation is project 12.
+
+suppose you want to implement existing OS with modules dependent on each other
+	implement module separately and use the remaining modules to help
+
+test process:
+	put files into directory
+	compile directory
+	execute directory in VMEmulator
+
+Screen, Output, String, Keyboard, Sys only have Main.jack test programs.
+Memory, Array, Math have .jack, .tst, and .cmp files as well
+
+Final test:
+	make copy of directory nand2tetris/projects/11/Pong
+	copy 8 compiled .vm files of your OS into directory
+	execute this directory in the supplied VM emulator.
