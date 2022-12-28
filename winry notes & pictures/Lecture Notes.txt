@@ -2632,3 +2632,21 @@ apparently, "Arrray.new" is a function, not a constructor.
 you have to implicitly use Memory.alloc.
 
 Array.dispose is trivial, just use Memory.deAlloc
+
+
+
+Unit 6.12: The Sys Class
+
+the last class in the operating system!
+
+most interesting function is init()
+
+bootstrapping/booting: process of loading basic software after general reset
+
+when computer is reset, execution starts with ROM[0] immediately
+VM needs to do sp=256, call Sys.init
+program execution starts with Main.main
+Sys.init: initialize OS, then call Main.main()
+Sys.halt: implemented with infinite loop
+Sys.wait: implemented with a loop, machine specific
+Sys.error: prints given error code in form "ERR<errorCode>", and halts
