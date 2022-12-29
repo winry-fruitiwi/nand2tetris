@@ -2677,3 +2677,23 @@ Final test:
 	make copy of directory nand2tetris/projects/11/Pong
 	copy 8 compiled .vm files of your OS into directory
 	execute this directory in the supplied VM emulator.
+
+
+
+Unit 6.14: Perspective
+
+What is the difference between our OS and the normal OS?
+	we do not support multithreading or a filesystem
+	security/communications are not supported either
+
+Why is the OS so open?
+	everything is open! this is a laboratory
+	user code and OS is on the same execution level
+
+How does the Jack OS rate in terms of efficiency? TLDR: reasonable
+	we did a decent job on efficiency for mathematics and graphics
+	however, both are usually implemented in hardware
+	usually the GPU renders the graphics and lets the CPU compute more efficiently
+	sadly in the Jack OS, everything is done by CPU
+
+the modern OS will always be improving.
